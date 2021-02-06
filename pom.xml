@@ -11,7 +11,7 @@
 	<groupId>com.thesisproject.ct</groupId>
 	<artifactId>contact-tracing-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>contact-tracing-service</name>
 	<description>Service for COVID-19 contact tracing</description>
 	<properties>
