@@ -20,7 +20,7 @@ import com.thesisproject.ct.contacttracingservice.model.Subject;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
 
 @RestController
-@RequestMapping("/subject")
+@RequestMapping("/subjects")
 public class SubjectController {
 	
 	@Autowired
