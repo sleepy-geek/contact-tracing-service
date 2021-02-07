@@ -1,6 +1,8 @@
 package com.thesisproject.ct.contacttracingservice.service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.enums.FormStatus;
+import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 
 @Service
@@ -45,5 +48,13 @@ public class FormService {
 		formRepository.saveAndFlush(formEntity);
 		
 		return baseUrl + formEntity.getFormId();
+	}
+	
+	public String validateFormId(UUID formId) {
+		Optional.ofNullable(formId)
+				.flatMap(formRepository::findById)
+				.filter(form -> !FormStatus.SUBMITTED.equals(form.getStatus()))
+				.orElseThrow(BadRequestException::new);
+		return "OK";
 	}
 }

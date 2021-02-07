@@ -41,7 +41,7 @@ public class FormController {
 	
 	@GetMapping("/get/{formId}")
 	public ModelAndView getForm(@PathVariable(name = "formId") UUID formId,ModelMap model) {
-		
+		formService.validateFormId(formId);
 		return new ModelAndView("subjectFormView", "subject", new Subject());
 	}
 	
