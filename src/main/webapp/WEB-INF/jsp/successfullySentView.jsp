@@ -7,6 +7,6 @@
 </head>
 <body>
 	<h2>Congratulations! You've successfully created contact tracing form. Please refer to your email for the URL.</h2>
-	<h3>Or click on this link: <link href="${formUrl}">${formUrl}</h3>
+	<p>Or click on this link: <a href="${formUrl}">${formUrl}</a></p>
 </body>
 </html>
