@@ -31,12 +31,12 @@ public class FormEntity {
 	@Column(name = "subject_id", nullable = true)
 	private UUID subjectId;
 	
-	@Column(name = "subject_id", nullable = false)
+	@Column(name = "status", nullable = false)
 	private FormStatus status;
 	
-	@Column(name = "subject_id", nullable = false)
+	@Column(name = "created_dt", nullable = false)
 	private LocalDateTime createdDate;
 	
-	@Column(name = "subject_id", nullable = true)
+	@Column(name = "submitted_dt", nullable = true)
 	private LocalDateTime submittedDate;
 }
