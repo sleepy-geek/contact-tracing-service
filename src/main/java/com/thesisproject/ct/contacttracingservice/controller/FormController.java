@@ -38,7 +38,6 @@ public class FormController {
 	
 	@PostMapping("/create")
 	public String createForm(@RequestParam("email") String email,
-							 BindingResult result,
 							 ModelMap model) {
 		String formUrl = formService.sendFormUrlToEmail(email);
 		model.addAttribute("formUrl", formUrl);
