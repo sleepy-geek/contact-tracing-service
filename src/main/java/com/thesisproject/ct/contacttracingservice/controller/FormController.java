@@ -33,12 +33,15 @@ public class FormController {
 	
 	@GetMapping("/create/{email}")
 	public String createForm(@PathVariable(name = "email") String email, ModelMap model) {
-		formService.sendFormUrlToEmail(email);
+		String formUrl = formService.sendFormUrlToEmail(email);
+		model.addAttribute("formUrl", formUrl);
+		
 		return "successfullySentView";
 	}
 	
 	@GetMapping("/get/{formId}")
 	public ModelAndView getForm(@PathVariable(name = "formId") UUID formId,ModelMap model) {
+		
 		return new ModelAndView("subjectFormView", "subject", new Subject());
 	}
 	
