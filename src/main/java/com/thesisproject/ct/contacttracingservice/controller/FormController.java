@@ -36,8 +36,8 @@ public class FormController {
 		return "homeView";
 	}
 	
-	@GetMapping("/create")
-	public String createForm(@Valid @ModelAttribute("email") String email,
+	@PostMapping("/create")
+	public String createForm(@RequestParam("email") String email,
 							 BindingResult result,
 							 ModelMap model) {
 		String formUrl = formService.sendFormUrlToEmail(email);

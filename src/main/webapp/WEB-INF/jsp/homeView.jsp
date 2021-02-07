@@ -4,15 +4,15 @@
 <html>
 	<head>
 		<meta charset="ISO-8859-1">
-		<title>Contact Tracing Form</title>
+		<title>Contact Tracing Home</title>
 	</head>
 	<body>
 		<h3>Hello! Thank you for using our system. Kindly input correct details on the fields below.</h3>
-		<form:form method="POST" action="/forms/create" modelAttribute="formUrl">
+		<form:form method="POST" action="/forms/create">
 			<table>
 				<tr>
 					<td><form:label path="email">Email:</form:label></td>
-					<td><form:input path="email"/></td>
+					<td><input type="text" name="email"/></td>
 				</tr>
 				<tr>
 					<td><input type="submit" value="Create Form"/></td>
