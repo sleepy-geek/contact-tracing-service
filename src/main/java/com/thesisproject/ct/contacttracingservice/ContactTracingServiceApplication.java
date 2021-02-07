@@ -9,5 +9,4 @@ public class ContactTracingServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ContactTracingServiceApplication.class, args);
 	}
-
 }

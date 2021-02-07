@@ -28,13 +28,13 @@ public class SubjectTemperatureEntity {
 	@Column(name = "temp_id")
 	private UUID temperatureId;
 	
-	@Column(name = "subject_id")
+	@Column(name = "subject_id", nullable = false)
 	private UUID subjectId;
 	
-	@Column(name = "temperature")
+	@Column(name = "temperature", nullable = false)
 	private Double temperature;
 	
-	@Column(name = "record_date")
+	@Column(name = "record_date", nullable = false)
 	private LocalDateTime recordDate;
 	
 	public SubjectTemperatureEntity(SubjectTemperature subjectTemperature) {

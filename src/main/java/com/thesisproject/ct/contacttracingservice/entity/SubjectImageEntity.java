@@ -27,16 +27,16 @@ public class SubjectImageEntity {
 	@Column(name = "image_id")
 	private UUID imageId;
 	
-	@Column(name = "subject_id")
+	@Column(name = "subject_id", nullable = false)
 	private UUID subjectId;
 	
-	@Column(name = "data")
+	@Column(name = "data", nullable = false)
 	private byte[] data;
 	
-	@Column(name = "file_name")
+	@Column(name = "file_name", nullable = false)
 	private String fileName;
 	
-	@Column(name = "file_type")
+	@Column(name = "file_type", nullable = false)
 	private String type;
 	
 	public SubjectImageEntity(SubjectImage subjectImage) {

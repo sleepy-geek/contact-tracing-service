@@ -27,31 +27,31 @@ public class SubjectEntity {
 	@Column(name = "subject_id")
 	private UUID subjectId;
 	
-	@Column(name = "first_name")
+	@Column(name = "first_name", nullable = false)
 	private String firstName;
 	
-	@Column(name = "middle_name")
+	@Column(name = "middle_name", nullable = false)
 	private String middleName;
 	
-	@Column(name = "last_name")
+	@Column(name = "last_name", nullable = false)
 	private String lastName;
 	
-	@Column(name = "id_number")
+	@Column(name = "id_number", unique = true, nullable = false)
 	private String idNumber;
 	
-	@Column(name = "contact_number")
+	@Column(name = "contact_number", nullable = false)
 	private String contactNumber;
 	
-	@Column(name = "email")
+	@Column(name = "email", nullable = false)
 	private String email;
 	
-	@Column(name = "job_position")
+	@Column(name = "job_position", nullable = false)
 	private String position;
 	
-	@Column(name = "department")
+	@Column(name = "department", nullable = false)
 	private String department;
 	
-	@Column(name = "data_privacy_agreement")
+	@Column(name = "data_privacy_agreement", nullable = false)
 	private boolean agreedDataPrivacyConsent;
 	
 	public SubjectEntity(Subject subject) {
