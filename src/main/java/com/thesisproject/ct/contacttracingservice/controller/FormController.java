@@ -31,8 +31,14 @@ public class FormController {
 	@Autowired 
 	private FormService formService;
 	
-	@GetMapping("/create/{email}")
-	public String createForm(@PathVariable(name = "email") String email,
+	@GetMapping("/")
+	public String home(ModelMap model) {
+		return "homeView";
+	}
+	
+	@GetMapping("/create")
+	public String createForm(@Valid @ModelAttribute("email") String email,
+							 BindingResult result,
 							 ModelMap model) {
 		String formUrl = formService.sendFormUrlToEmail(email);
 		model.addAttribute("formUrl", formUrl);
