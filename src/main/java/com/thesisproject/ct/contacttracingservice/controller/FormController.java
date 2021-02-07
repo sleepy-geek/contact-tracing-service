@@ -32,26 +32,31 @@ public class FormController {
 	private FormService formService;
 	
 	@GetMapping("/create/{email}")
-	public String createForm(@PathVariable(name = "email") String email, ModelMap model) {
+	public String createForm(@PathVariable(name = "email") String email,
+							 ModelMap model) {
 		String formUrl = formService.sendFormUrlToEmail(email);
 		model.addAttribute("formUrl", formUrl);
 		
 		return "successfullySentView";
 	}
 	
-	@GetMapping("/get/{formId}")
-	public ModelAndView getForm(@PathVariable(name = "formId") UUID formId,ModelMap model) {
+	@GetMapping("/{formId}")
+	public ModelAndView getForm(@PathVariable(name = "formId") UUID formId,
+								ModelMap model) {
 		formService.validateFormId(formId);
+		model.addAttribute("formId", formId);
 		return new ModelAndView("subjectFormView", "subject", new Subject());
 	}
 	
-	@PostMapping("/submit")
-	public String submmitForm(@RequestParam("image") MultipartFile image, 
+	@PostMapping("/{formId}/submit")
+	public String submmitForm(@PathVariable(name = "formId") UUID formId,
+							  @RequestParam("image") MultipartFile image, 
 							  @Valid @ModelAttribute("subject") Subject subject, 
-							  BindingResult result, 
+							  BindingResult result,
 							  ModelMap model) {
 		subject = subjectService.postSubject(subject);
-
+		formService.submitForm(formId, subject);
+		
 		model.addAttribute("subjectId", subject.getSubjectId());
 		model.addAttribute("firstName", subject.getFirstName());
 		model.addAttribute("middleName", subject.getMiddleName());

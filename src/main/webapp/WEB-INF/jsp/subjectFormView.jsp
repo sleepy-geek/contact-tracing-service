@@ -8,7 +8,7 @@
 	</head>
 	<body>
 		<h3>Hello! Thank you for using our system. Kindly input correct details on the fields below.</h3>
-		<form:form method="POST" action="/form/submit" modelAttribute="subject" enctype="multipart/form-data">
+		<form:form method="POST" action="/form/${formId}/submit" modelAttribute="subject" enctype="multipart/form-data">
 			<table>
 				<tr>
 					<td><form:label path="firstName">First Name:</form:label></td>

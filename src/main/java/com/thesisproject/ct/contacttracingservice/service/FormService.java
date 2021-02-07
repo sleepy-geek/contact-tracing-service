@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.enums.FormStatus;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
+import com.thesisproject.ct.contacttracingservice.model.Subject;
 import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 
 @Service
@@ -48,6 +49,16 @@ public class FormService {
 		formRepository.saveAndFlush(formEntity);
 		
 		return baseUrl + formEntity.getFormId();
+	}
+	
+	public String submitForm(UUID formId, Subject subject) {
+		FormEntity formEntity = formRepository.getOne(formId);
+		formEntity.setStatus(FormStatus.SUBMITTED);
+		formEntity.setSubjectId(subject.getSubjectId());
+		formEntity.setSubmittedDate(LocalDateTime.now());
+		
+		formRepository.saveAndFlush(formEntity);
+		return "OK";
 	}
 	
 	public String validateFormId(UUID formId) {
