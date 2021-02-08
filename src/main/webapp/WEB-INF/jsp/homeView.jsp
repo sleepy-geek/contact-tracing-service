@@ -12,7 +12,7 @@
 			<form method="POST" action="/forms/create">
 				<table class="table-striped">
 					<tr>
-						<td><label path="email">Email:</label></td>
+						<td><label>Email:</label></td>
 						<td><input type="text" name="email"/></td>
 					</tr>
 					<tr>
