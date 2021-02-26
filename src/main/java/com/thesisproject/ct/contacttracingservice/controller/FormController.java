@@ -53,8 +53,18 @@ public class FormController {
 		return new ModelAndView("subjectFormView", "subject", new Subject());
 	}
 	
+	@PostMapping("/{formId}/confirmation")
+	public ModelAndView confirmFormSubmission(@PathVariable(name = "formId") UUID formId,
+											  @Valid @ModelAttribute("subject") Subject subject, 
+											  BindingResult result,
+											  ModelMap model) {
+		subject = subjectService.postSubject(subject);
+		
+		return null;
+	}
+	
 	@PostMapping("/{formId}/submit")
-	public String submmitForm(@PathVariable(name = "formId") UUID formId,
+	public String submitForm(@PathVariable(name = "formId") UUID formId,
 							  @RequestParam("image") MultipartFile image, 
 							  @Valid @ModelAttribute("subject") Subject subject, 
 							  BindingResult result,
