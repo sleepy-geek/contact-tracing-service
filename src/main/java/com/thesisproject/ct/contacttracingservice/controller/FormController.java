@@ -1,17 +1,10 @@
 package com.thesisproject.ct.contacttracingservice.controller;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.UUID;
 
-import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -24,11 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.thesisproject.ct.contacttracingservice.model.Subject;
 import com.thesisproject.ct.contacttracingservice.service.FormService;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
@@ -42,20 +30,6 @@ public class FormController {
 	
 	@Autowired 
 	private FormService formService;
-	
-	@GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<byte[]> getQRCode() {
-		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-			QRCodeWriter qrCodeWriter = new QRCodeWriter();
-			BitMatrix bitMatrix = qrCodeWriter.encode("https://contact-tracing-service.herokuapp.com/forms", BarcodeFormat.QR_CODE, 500, 500);
-			ImageIO.write(MatrixToImageWriter.toBufferedImage(bitMatrix), "png", baos);
-			return ResponseEntity.ok(baos.toByteArray());
-		} catch (WriterException e) {
-		} catch (IOException e) {
-		}
-		
-		return null;
-	}
 	 
 	@GetMapping()
 	public String home(ModelMap model) {
