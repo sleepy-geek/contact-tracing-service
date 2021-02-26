@@ -43,7 +43,7 @@ public class FormController {
 	@Autowired 
 	private FormService formService;
 	
-	@GetMapping(path = "/qrcode")
+	@GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
 	public ResponseEntity<byte[]> getQRCode() {
 		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
