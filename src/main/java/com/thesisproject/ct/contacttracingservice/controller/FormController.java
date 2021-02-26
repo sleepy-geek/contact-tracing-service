@@ -43,11 +43,11 @@ public class FormController {
 	@Autowired 
 	private FormService formService;
 	
-	@GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
+	@GetMapping(path = "/qrcode")
 	public ResponseEntity<byte[]> getQRCode() {
 		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
-			BitMatrix bitMatrix = qrCodeWriter.encode("https:/http://contact-tracing-service.herokuapp.com/forms", BarcodeFormat.QR_CODE, 500, 500);
+			BitMatrix bitMatrix = qrCodeWriter.encode("https://contact-tracing-service.herokuapp.com/forms", BarcodeFormat.QR_CODE, 500, 500);
 			ImageIO.write(MatrixToImageWriter.toBufferedImage(bitMatrix), "png", baos);
 			return ResponseEntity.ok(baos.toByteArray());
 		} catch (WriterException e) {
