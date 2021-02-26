@@ -1,8 +1,12 @@
 package com.thesisproject.ct.contacttracingservice.controller;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,13 +44,14 @@ public class FormController {
 	private FormService formService;
 	
 	@GetMapping(path = "/qrcode", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<BufferedImage> getQRCode() {
-		
-		try {
+	public ResponseEntity<byte[]> getQRCode() {
+		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
 			BitMatrix bitMatrix = qrCodeWriter.encode("https:/http://contact-tracing-service.herokuapp.com/forms", BarcodeFormat.QR_CODE, 500, 500);
-			return ResponseEntity.ok(MatrixToImageWriter.toBufferedImage(bitMatrix));
+			ImageIO.write(MatrixToImageWriter.toBufferedImage(bitMatrix), "png", baos);
+			return ResponseEntity.ok(baos.toByteArray());
 		} catch (WriterException e) {
+		} catch (IOException e) {
 		}
 		
 		return null;
