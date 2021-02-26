@@ -11,8 +11,9 @@ import com.thesisproject.ct.contacttracingservice.util.QRCodeUtility;
 @Controller
 @RequestMapping("")
 public class CoreController {
+	
 	@GetMapping(produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<byte[]> getQRCode() {
+	public ResponseEntity<byte[]> getFormsQRCode() {
 		return ResponseEntity.ok(QRCodeUtility.generateQRCode("https://contact-tracing-service.herokuapp.com/forms"));
 	}
 }

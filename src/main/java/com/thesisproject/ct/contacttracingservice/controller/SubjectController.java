@@ -46,4 +46,9 @@ public class SubjectController {
 											   @RequestBody Subject subject) throws BadRequestException, NotFoundException {
 		return ResponseEntity.ok().body(subjectService.putSubject(subjectId, subject));
 	}
+	
+	@PostMapping(path = "/{subjectId}/temperature", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Subject> postSubjectTemperature(@RequestBody Subject subject) throws BadRequestException {
+		return ResponseEntity.ok().body(subjectService.postSubject(subject));
+	}
 }
