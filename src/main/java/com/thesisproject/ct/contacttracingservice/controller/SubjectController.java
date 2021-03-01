@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.Subject;
+import com.thesisproject.ct.contacttracingservice.service.EmailService;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
 
 @RestController
@@ -26,9 +27,18 @@ public class SubjectController {
 	@Autowired
 	private SubjectService subjectService;
 	
+	@Autowired
+	private EmailService emailService;
+	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Subject>> getSubjects() {
 		return ResponseEntity.ok().body(subjectService.getSubjects());
+	}
+	
+	@PostMapping(path = "/export")
+	public ResponseEntity<List<Subject>> exportSubjects() {
+		emailService.sendSubjectRecordsReport();
+		return ResponseEntity.ok(null);
 	}
 	
 	@GetMapping(path = "/{subjectId}", produces = MediaType.APPLICATION_JSON_VALUE)

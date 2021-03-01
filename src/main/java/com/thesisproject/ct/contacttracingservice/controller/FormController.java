@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.thesisproject.ct.contacttracingservice.model.Subject;
 import com.thesisproject.ct.contacttracingservice.service.FormService;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
+import com.thesisproject.ct.contacttracingservice.service.SystemService;
 
 @Controller
 @RequestMapping("/forms")
@@ -30,46 +30,63 @@ public class FormController {
 	
 	@Autowired 
 	private FormService formService;
+	
+	@Autowired 
+	private SystemService systemService;
 	 
 	@GetMapping()
-	public String home(ModelMap model) {
-		return "homeView";
+	public String getFormBuilder(ModelMap model) {
+		return "createFormView";
 	}
 	
 	@PostMapping("/create")
 	public String createForm(@RequestParam("email") String email,
 							 ModelMap model) {
-		String formUrl = formService.sendFormUrlToEmail(email);
-		model.addAttribute("formUrl", formUrl);
-		
-		return "successfullySentView";
+		model.addAttribute("formUrl", formService.sendFormUrlToEmail(email));
+		return "formCreatedView";
 	}
 	
 	@GetMapping("/{formId}")
 	public ModelAndView getForm(@PathVariable(name = "formId") UUID formId,
 								ModelMap model) {
 		formService.validateFormId(formId);
+		Subject subject = subjectService.getFormSubject(formId);
+		
 		model.addAttribute("formId", formId);
-		return new ModelAndView("subjectFormView", "subject", new Subject());
+		model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
+		
+		return new ModelAndView("subjectFormView", "subject", subject);
 	}
 	
-	@PostMapping("/{formId}/confirmation")
-	public ModelAndView confirmFormSubmission(@PathVariable(name = "formId") UUID formId,
-											  @Valid @ModelAttribute("subject") Subject subject, 
-											  BindingResult result,
-											  ModelMap model) {
+	@PostMapping("/{formId}/save")
+	public String saveForm(@PathVariable(name = "formId") UUID formId,
+							@Valid @ModelAttribute("subject") Subject subject, 
+							BindingResult result,
+							ModelMap model) {
 		subject = subjectService.postSubject(subject);
+		formService.saveForm(formId, subject);
 		
-		return null;
+		model.addAttribute("subjectId", subject.getSubjectId());
+		model.addAttribute("firstName", subject.getFirstName());
+		model.addAttribute("middleName", subject.getMiddleName());
+		model.addAttribute("lastName", subject.getLastName());
+		model.addAttribute("idNumber", subject.getIdNumber());
+		model.addAttribute("contactNumber", subject.getContactNumber());
+		model.addAttribute("email", subject.getEmail());
+		model.addAttribute("position", subject.getPosition());
+		model.addAttribute("department", subject.getDepartment());
+		model.addAttribute("agreedDataPrivacyConsent", subject.isAgreedDataPrivacyConsent());
+		
+		return "formSavedView";
 	}
 	
 	@PostMapping("/{formId}/submit")
 	public String submitForm(@PathVariable(name = "formId") UUID formId,
-							  @RequestParam("image") MultipartFile image, 
 							  @Valid @ModelAttribute("subject") Subject subject, 
 							  BindingResult result,
 							  ModelMap model) {
-		subject = subjectService.postSubject(subject);
+		subject = subjectService.getFormSubject(formId);
 		formService.submitForm(formId, subject);
 		
 		model.addAttribute("subjectId", subject.getSubjectId());
@@ -82,8 +99,7 @@ public class FormController {
 		model.addAttribute("position", subject.getPosition());
 		model.addAttribute("department", subject.getDepartment());
 		model.addAttribute("agreedDataPrivacyConsent", subject.isAgreedDataPrivacyConsent());
-		model.addAttribute("image", image);
 		
-		return "subjectDetailView";
+		return "formSubmittedView";
 	}
 }

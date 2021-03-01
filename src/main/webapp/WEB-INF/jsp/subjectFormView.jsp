@@ -10,7 +10,7 @@
 	<body>
 		<div class="container">
 			<h3>Hello! Thank you for using our system. Kindly input correct details on the fields below.</h3>
-			<form:form method="POST" action="/forms/${formId}/submit" modelAttribute="subject" enctype="multipart/form-data">
+			<form:form method="POST" action="/forms/${formId}/save" modelAttribute="subject">
 				<table class="table-striped">
 					<tr>
 						<td><form:label path="firstName">First Name:</form:label></td>
@@ -34,26 +34,35 @@
 					</tr>
 					<tr>
 						<td><form:label path="email">Email:</form:label></td>
-						<td><form:input path="email"/></td>
+						<td><form:input path="email"/>${email}</td>
 					</tr>
 					<tr>
 						<td><form:label path="position">Position:</form:label></td>
-						<td><form:input path="position"/></td>
+						<td>
+							<form:select path="position">
+								<form:option value="${position}" label="${positionLabel}"/>
+								<form:options items="${validPositions}"/>
+							</form:select>
+						</td>
 					</tr>
 					<tr>
 						<td><form:label path="department">Department:</form:label></td>
-						<td><form:input path="department"/></td>
+						<td>
+							<form:select path="department">
+								<form:option value="${department}" label="${departmentLabel}"/>
+								<form:options items="${validDepartments}"/>
+							</form:select>
+						</td>
 					</tr>
 					<tr>
 						<td><form:label path="agreedDataPrivacyConsent">Data Privacy Agreement:</form:label></td>
 						<td><form:checkbox path="agreedDataPrivacyConsent"/></td>
 					</tr>
 					<tr>
-						<td><form:label path="image">Image:</form:label></td>
-						<td><input type="file" name="image"/></td>
+						<td><form:hidden path="subjectId"/></td>
 					</tr>
 					<tr>
-						<td><input type="submit" value="Submit"/></td>
+						<td><input type="submit" value="Save Details"/></td>
 					</tr>
 				</table>
 			</form:form>

@@ -37,9 +37,13 @@ public class SubjectTemperatureEntity {
 	@Column(name = "record_date", nullable = false)
 	private LocalDateTime recordDate;
 	
+	@Column(name = "area_code", nullable = false)
+	private String areaCode;
+	
 	public SubjectTemperatureEntity(SubjectTemperature subjectTemperature) {
 		this.temperatureId = subjectTemperature.getTemperatureId();
 		this.temperature = subjectTemperature.getTemperature();
 		this.recordDate = subjectTemperature.getRecordDate();
+		this.areaCode = subjectTemperature.getAreaCode();
 	}
 }

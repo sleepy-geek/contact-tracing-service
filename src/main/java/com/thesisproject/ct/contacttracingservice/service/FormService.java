@@ -6,8 +6,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
@@ -26,18 +24,12 @@ public class FormService {
 	private FormRepository formRepository;
 	
 	@Autowired
-	private JavaMailSender emailSender;
+	private EmailService emailService;
+	
 	
 	public String sendFormUrlToEmail(String email) {
 		String formUrl = this.createFormUrl();
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("no-reply-contact-tracing@gmail.com");
-		message.setTo(email);
-		message.setSubject("Contact Tracing Form URL");
-		message.setText(formUrl);
-		
-		emailSender.send(message);
-		
+		emailService.sendFormUrlEmail(email, formUrl);
 		return formUrl;
 	}
 	
@@ -51,11 +43,23 @@ public class FormService {
 		return baseUrl + formEntity.getFormId();
 	}
 	
+	public String saveForm(UUID formId, Subject subject) {
+		FormEntity formEntity = formRepository.getOne(formId);
+		formEntity.setStatus(FormStatus.GENERATED);
+		formEntity.setSubjectId(subject.getSubjectId());
+		formEntity.setSubmittedDate(LocalDateTime.now());
+		
+		formRepository.saveAndFlush(formEntity);
+		return "OK";
+	}
+	
 	public String submitForm(UUID formId, Subject subject) {
 		FormEntity formEntity = formRepository.getOne(formId);
 		formEntity.setStatus(FormStatus.SUBMITTED);
 		formEntity.setSubjectId(subject.getSubjectId());
 		formEntity.setSubmittedDate(LocalDateTime.now());
+		
+		emailService.sendPersonalQRCodeEmail(subject);
 		
 		formRepository.saveAndFlush(formEntity);
 		return "OK";

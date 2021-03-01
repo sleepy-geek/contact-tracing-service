@@ -13,10 +13,10 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class QRCodeUtility {
-	public byte[] generateQRCode(String content) {
+	public byte[] generateQRCode(String content, int width, int height) {
 		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 			QRCodeWriter qrCodeWriter = new QRCodeWriter();
-			BitMatrix bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, 500, 500);
+			BitMatrix bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height);
 			ImageIO.write(MatrixToImageWriter.toBufferedImage(bitMatrix), "png", baos);
 			return baos.toByteArray();
 		} catch (Exception e) {

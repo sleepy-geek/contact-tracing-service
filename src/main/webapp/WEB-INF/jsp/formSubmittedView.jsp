@@ -1,14 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="ISO-8859-1">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-		<title>Subject Details</title>
+		<title>Subject Details Submitted</title>
 	</head>
 <body>
 	<div class="container">
-		<h2>Congratulations! You've successfully created contact tracing subject record. Please refer to details below:</h2>
+		<h2>Congratulations! You're request was successfully submitted. Please check your email for your personal identification QR code.</h2>
 		<table class="table-striped">
 			<tr>
 				<td>First Name: </td>
@@ -49,10 +50,6 @@
 			<tr>
 				<td>Record ID: </td>
 				<td>${subjectId}</td>
-			</tr>
-			<tr>
-				<td>Image: </td>
-				<td>${image}</td>
 			</tr>
 		</table>
 	</div>

@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.entity.SubjectEntity;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.Subject;
+import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 import com.thesisproject.ct.contacttracingservice.repository.SubjectRepository;
 
 @Service
@@ -19,6 +21,8 @@ public class SubjectService {
 	
 	@Autowired
 	private SubjectRepository subjectRepository;
+	
+	@Autowired FormRepository formRepository;
 	
 	public List<Subject> getSubjects() {
 		return subjectRepository.findAll()
@@ -52,5 +56,12 @@ public class SubjectService {
 		} else {
 			throw new NotFoundException();
 		}
+	}
+	
+	public Subject getFormSubject(UUID formId) {
+		return formRepository.findById(formId)
+					   		 .map(FormEntity::getSubjectId)
+					   		 .map(this::getSubject)
+					   		 .orElse(new Subject());
 	}
 }
