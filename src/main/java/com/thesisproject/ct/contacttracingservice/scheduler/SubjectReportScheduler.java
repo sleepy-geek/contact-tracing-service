@@ -14,7 +14,7 @@ public class SubjectReportScheduler {
 	@Autowired
 	private EmailService emailService;
 	
-	@Scheduled(cron = "@hourly")
+	@Scheduled(cron = "@daily")
 	public void sendSubectRecordReports() {
 		emailService.sendSubjectRecordsReport();
 	}
