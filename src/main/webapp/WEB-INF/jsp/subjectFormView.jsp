@@ -15,26 +15,32 @@
 					<tr>
 						<td><form:label path="firstName">First Name:</form:label></td>
 						<td><form:input path="firstName"/></td>
+						<td><form:errors path="firstName" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="middleName">Middle Name:</form:label></td>
 						<td><form:input path="middleName"/></td>
+						<td><form:errors path="middleName" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="lastName">Last Name:</form:label></td>
 						<td><form:input path="lastName"/></td>
+						<td><form:errors path="lastName" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="idNumber">ID Number:</form:label></td>
 						<td><form:input path="idNumber"/></td>
+						<td><form:errors path="idNumber" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="contactNumber">Contact Number:</form:label></td>
 						<td><form:input path="contactNumber"/></td>
+						<td><form:errors path="contactNumber" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="email">Email:</form:label></td>
 						<td><form:input path="email"/>${email}</td>
+						<td><form:errors path="email" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="position">Position:</form:label></td>
@@ -44,6 +50,7 @@
 								<form:options items="${validPositions}"/>
 							</form:select>
 						</td>
+						<td><form:errors path="position" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="department">Department:</form:label></td>
@@ -53,10 +60,12 @@
 								<form:options items="${validDepartments}"/>
 							</form:select>
 						</td>
+						<td><form:errors path="department" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:label path="agreedDataPrivacyConsent">Data Privacy Agreement:</form:label></td>
 						<td><form:checkbox path="agreedDataPrivacyConsent"/></td>
+						<td><form:errors path="agreedDataPrivacyConsent" cssClass="error"/></td>
 					</tr>
 					<tr>
 						<td><form:hidden path="subjectId"/></td>

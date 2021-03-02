@@ -55,7 +55,7 @@ public class FormController {
 		model.addAttribute("formId", formId);
 		model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
 		model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
-		
+			
 		return new ModelAndView("subjectFormView", "subject", subject);
 	}
 	
@@ -64,9 +64,19 @@ public class FormController {
 							@Valid @ModelAttribute("subject") Subject subject, 
 							BindingResult result,
 							ModelMap model) {
+		if(result.hasErrors()) {
+			model.addAttribute("formId", formId);
+			model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
+			model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
+			return "subjectFormView";
+		}
+		
 		subject = subjectService.postSubject(subject);
 		formService.saveForm(formId, subject);
 		
+		model.addAttribute("formId", formId);
+		model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("subjectId", subject.getSubjectId());
 		model.addAttribute("firstName", subject.getFirstName());
 		model.addAttribute("middleName", subject.getMiddleName());
