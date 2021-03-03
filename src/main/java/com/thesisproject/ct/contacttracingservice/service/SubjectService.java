@@ -31,10 +31,10 @@ public class SubjectService {
 								.collect(Collectors.toList());
 	}
 	
-	public Subject getSubject(UUID subjectId) throws NotFoundException {
+	public Subject getSubject(UUID subjectId)  {
 		return subjectRepository.findById(subjectId)
 								.map(Subject::new)
-					   			.orElseThrow(NotFoundException::new);
+					   			.orElse(new Subject());
 	}
 	
 	public Subject postSubject(Subject subject) throws BadRequestException {

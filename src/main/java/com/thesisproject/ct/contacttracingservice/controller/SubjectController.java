@@ -21,7 +21,7 @@ import com.thesisproject.ct.contacttracingservice.service.EmailService;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
 
 @RestController
-@RequestMapping("/subjects")
+@RequestMapping("/api/subjects")
 public class SubjectController {
 	
 	@Autowired

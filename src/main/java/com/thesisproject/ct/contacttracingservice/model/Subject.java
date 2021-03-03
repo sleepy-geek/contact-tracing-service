@@ -16,6 +16,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Subject {
+	
+	@NotNull(message = "This is a required field")
 	private UUID subjectId;
 	
 	@NotNull(message = "This is a required field")
@@ -31,7 +33,7 @@ public class Subject {
 	private String lastName;
 	
 	@NotNull(message = "This is a required field")
-	@Size(min = 2, max = 50, message = "Please enter value with 2 to 50 characters.")
+	@Size(min = 6, max = 6, message = "Please enter value with 6 characters.")
 	private String idNumber;
 	
 	@NotNull(message = "This is a required field")

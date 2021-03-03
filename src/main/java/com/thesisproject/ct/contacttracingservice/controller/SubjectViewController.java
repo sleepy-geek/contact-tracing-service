@@ -23,7 +23,7 @@ import com.thesisproject.ct.contacttracingservice.service.SystemService;
 
 @Controller
 @RequestMapping("/forms")
-public class FormController {
+public class SubjectViewController {
 	
 	@Autowired
 	private SubjectService subjectService;

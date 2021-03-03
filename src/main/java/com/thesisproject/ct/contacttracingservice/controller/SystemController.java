@@ -14,7 +14,7 @@ import com.thesisproject.ct.contacttracingservice.entity.SystemVariableEntity;
 import com.thesisproject.ct.contacttracingservice.service.SystemService;
 
 @RestController
-@RequestMapping("/system")
+@RequestMapping("/api/system")
 public class SystemController {
 	
 	@Autowired
