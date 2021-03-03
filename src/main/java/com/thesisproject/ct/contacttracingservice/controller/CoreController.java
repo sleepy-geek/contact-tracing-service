@@ -11,8 +11,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.thesisproject.ct.contacttracingservice.model.Admin;
 import com.thesisproject.ct.contacttracingservice.util.QRCodeUtility;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 @Controller
 @RequestMapping("")
+@ApiIgnore
 public class CoreController {
 	
 	@GetMapping(produces = MediaType.IMAGE_PNG_VALUE)

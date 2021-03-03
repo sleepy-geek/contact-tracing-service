@@ -21,8 +21,11 @@ import com.thesisproject.ct.contacttracingservice.service.FormService;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
 import com.thesisproject.ct.contacttracingservice.service.SystemService;
 
+import springfox.documentation.annotations.ApiIgnore;
+
 @Controller
 @RequestMapping("/forms")
+@ApiIgnore
 public class SubjectViewController {
 	
 	@Autowired

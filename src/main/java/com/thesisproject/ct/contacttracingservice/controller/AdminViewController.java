@@ -20,9 +20,11 @@ import com.thesisproject.ct.contacttracingservice.service.SubjectService;
 import com.thesisproject.ct.contacttracingservice.service.SystemService;
 
 import io.swagger.models.properties.UUIDProperty;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @RequestMapping("/admin")
+@ApiIgnore
 public class AdminViewController {
 	
 	@Autowired
