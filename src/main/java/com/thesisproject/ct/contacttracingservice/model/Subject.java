@@ -1,5 +1,6 @@
 package com.thesisproject.ct.contacttracingservice.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,7 +57,7 @@ public class Subject {
 	@AssertTrue(message = "Please accept data privacy agreement.")
 	private boolean agreedDataPrivacyConsent;
 	
-	private List<SubjectTemperature> temperatureRecord;
+	private List<SubjectTemperature> temperatureRecords;
 	private SubjectImage image;
 	
 	public Subject(SubjectEntity entity) {
@@ -70,5 +71,6 @@ public class Subject {
 		this.position = entity.getPosition();
 		this.department = entity.getDepartment();
 		this.agreedDataPrivacyConsent = entity.isAgreedDataPrivacyConsent();
+		this.temperatureRecords = new ArrayList<>();
 	}
 }

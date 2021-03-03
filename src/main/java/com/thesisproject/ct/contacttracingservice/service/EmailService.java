@@ -14,7 +14,6 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -31,7 +30,9 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.thesisproject.ct.contacttracingservice.enums.SubjectTableHeaders;
 import com.thesisproject.ct.contacttracingservice.model.Subject;
+import com.thesisproject.ct.contacttracingservice.model.SubjectTemperature;
 import com.thesisproject.ct.contacttracingservice.util.QRCodeUtility;
 
 @Service
@@ -132,8 +133,8 @@ public class EmailService {
 	public void sendSubjectRecordsReport() {
 		MimeMessage message = emailSender.createMimeMessage();
 		File file = new File("report.csv");
-		try(FileOutputStream fos = new FileOutputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream(); CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL))) {
-
+		try(FileOutputStream fos = new FileOutputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream(); CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), CSVFormat.DEFAULT.withHeader(SubjectTableHeaders.class))) {
+			
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 			helper.setFrom("no-reply-contact-tracing@gmail.com");
 			helper.setTo("cts.service.2021@gmail.com");
@@ -142,17 +143,38 @@ public class EmailService {
 
 			List<Subject> subjectList = subjectService.getSubjects();
 			for (Subject subject : subjectList) {
-				List<String> fields = Arrays.asList(String.valueOf(subject.getSubjectId()), 
-													subject.getFirstName(),
-													subject.getMiddleName(), 
-													subject.getLastName(), 
-													subject.getIdNumber(),
-													subject.getContactNumber(), 
-													subject.getEmail(), 
-													subject.getPosition(), 
-													subject.getDepartment(),
-													String.valueOf(subject.isAgreedDataPrivacyConsent()));
-				csvPrinter.printRecord(fields);
+				if(!subject.getTemperatureRecords().isEmpty()) {
+					for(SubjectTemperature subjectTemperature : subject.getTemperatureRecords()) {
+						List<String> fields = Arrays.asList(String.valueOf(subject.getSubjectId()), 
+								subject.getFirstName(),
+								subject.getMiddleName(), 
+								subject.getLastName(), 
+								subject.getIdNumber(),
+								subject.getContactNumber(), 
+								subject.getEmail(), 
+								subject.getPosition(), 
+								subject.getDepartment(),
+								String.valueOf(subject.isAgreedDataPrivacyConsent()),
+								String.valueOf(subjectTemperature.getTemperature()),
+								subjectTemperature.getAreaCode(),
+								String.valueOf(subjectTemperature.getRecordDate()));
+						csvPrinter.printRecord(fields);
+					}
+				} else {
+					List<String> fields = Arrays.asList(String.valueOf(subject.getSubjectId()), 
+							subject.getFirstName(),
+							subject.getMiddleName(), 
+							subject.getLastName(), 
+							subject.getIdNumber(),
+							subject.getContactNumber(), 
+							subject.getEmail(), 
+							subject.getPosition(), 
+							subject.getDepartment(),
+							String.valueOf(subject.isAgreedDataPrivacyConsent()));
+					csvPrinter.printRecord(fields);
+				}
+				
+				
 			}
 			
 			csvPrinter.flush();

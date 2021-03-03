@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.Subject;
+import com.thesisproject.ct.contacttracingservice.model.SubjectTemperature;
 import com.thesisproject.ct.contacttracingservice.service.EmailService;
 import com.thesisproject.ct.contacttracingservice.service.SubjectService;
 
@@ -58,7 +59,8 @@ public class SubjectController {
 	}
 	
 	@PostMapping(path = "/{subjectId}/temperature", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Subject> postSubjectTemperature(@RequestBody Subject subject) throws BadRequestException {
-		return ResponseEntity.ok().body(subjectService.postSubject(subject));
+	public ResponseEntity<SubjectTemperature> postSubjectTemperature(@PathVariable UUID subjectId,
+																	 @RequestBody SubjectTemperature subjectTemperature) throws BadRequestException {
+		return ResponseEntity.ok().body(subjectService.postSubjectTemperature(subjectId, subjectTemperature));
 	}
 }

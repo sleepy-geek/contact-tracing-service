@@ -12,12 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SubjectTemperature {
 	private UUID temperatureId;
+	private UUID subjectId;
 	private Double temperature;
 	private LocalDateTime recordDate;
 	private String areaCode;
 	
 	public SubjectTemperature(SubjectTemperatureEntity entity) {
 		this.temperatureId = entity.getTemperatureId();
+		this.subjectId = entity.getSubjectId();
 		this.temperature = entity.getTemperature();
 		this.recordDate = entity.getRecordDate();
 		this.areaCode = entity.getAreaCode();

@@ -42,6 +42,7 @@ public class SubjectTemperatureEntity {
 	
 	public SubjectTemperatureEntity(SubjectTemperature subjectTemperature) {
 		this.temperatureId = subjectTemperature.getTemperatureId();
+		this.subjectId = subjectTemperature.getSubjectId();
 		this.temperature = subjectTemperature.getTemperature();
 		this.recordDate = subjectTemperature.getRecordDate();
 		this.areaCode = subjectTemperature.getAreaCode();
