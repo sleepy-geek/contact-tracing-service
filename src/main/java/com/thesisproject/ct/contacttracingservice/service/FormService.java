@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.enums.FormStatus;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
-import com.thesisproject.ct.contacttracingservice.model.Subject;
+import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
+import com.thesisproject.ct.contacttracingservice.model.Form;
+import com.thesisproject.ct.contacttracingservice.model.UserProfile;
+import com.thesisproject.ct.contacttracingservice.model.UserRegistration;
 import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 
 @Service
@@ -28,48 +31,36 @@ public class FormService {
 	
 	
 	public String sendFormUrlToEmail(String email) {
-		String formUrl = this.createFormUrl();
-		emailService.sendFormUrlEmail(email, formUrl);
-		return formUrl;
+		return "OK";
 	}
 	
-	public String createFormUrl() {
-		FormEntity formEntity = new FormEntity();
-		formEntity.setCreatedDate(LocalDateTime.now());
-		formEntity.setStatus(FormStatus.CREATED);
-		
-		formRepository.saveAndFlush(formEntity);
-		
-		return baseUrl + formEntity.getFormId();
+	public Form getForm(UUID formId) {
+		return formRepository.findById(formId)
+					   		 .map(Form::new)
+					   		 .orElse(null);
 	}
 	
-	public String saveForm(UUID formId, Subject subject) {
-		FormEntity formEntity = formRepository.getOne(formId);
-		formEntity.setStatus(FormStatus.GENERATED);
-		formEntity.setSubjectId(subject.getSubjectId());
+	public Form createForm(UserRegistration userRegistration) {
+		Form form = new Form(userRegistration);
+		return Optional.of(form)
+					   .map(FormEntity::new)
+					   .map(formRepository::saveAndFlush)
+					   .map(Form::new)
+					   .map(frm -> {
+						   frm.setUserRegistration(userRegistration);
+						   return frm;
+					   })
+					   .orElse(null);
+	}
+	
+	public Form submitForm(Form form) {
+		FormEntity formEntity = formRepository.getOne(form.getFormId());
+		formEntity.setStatus(FormStatus.SUBMITTED.name());
 		formEntity.setSubmittedDate(LocalDateTime.now());
 		
-		formRepository.saveAndFlush(formEntity);
-		return "OK";
-	}
-	
-	public String submitForm(UUID formId, Subject subject) {
-		FormEntity formEntity = formRepository.getOne(formId);
-		formEntity.setStatus(FormStatus.SUBMITTED);
-		formEntity.setSubjectId(subject.getSubjectId());
-		formEntity.setSubmittedDate(LocalDateTime.now());
-		
-		emailService.sendPersonalQRCodeEmail(subject);
+		//emailService.sendPersonalQRCodeEmail(userProfile);
 		
 		formRepository.saveAndFlush(formEntity);
-		return "OK";
-	}
-	
-	public String validateFormId(UUID formId) {
-		Optional.ofNullable(formId)
-				.flatMap(formRepository::findById)
-				.filter(form -> !FormStatus.SUBMITTED.equals(form.getStatus()))
-				.orElseThrow(BadRequestException::new);
-		return "OK";
+		return null;
 	}
 }

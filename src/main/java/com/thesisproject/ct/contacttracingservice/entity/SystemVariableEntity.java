@@ -28,7 +28,6 @@ public class SystemVariableEntity {
 	@Column(name = "var_group")
 	private String variableGroup;
 	
-	
 	@Column(name = "var_key")
 	private String variableKey;
 	

@@ -23,6 +23,7 @@ import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -31,8 +32,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.thesisproject.ct.contacttracingservice.enums.SubjectTableHeaders;
-import com.thesisproject.ct.contacttracingservice.model.Subject;
-import com.thesisproject.ct.contacttracingservice.model.SubjectTemperature;
+import com.thesisproject.ct.contacttracingservice.model.Form;
+import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
+import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.util.QRCodeUtility;
 
 @Service
@@ -42,24 +44,27 @@ public class EmailService {
 	private JavaMailSender emailSender;
 
 	@Autowired
-	SubjectService subjectService;
+	UserService userService;
 
-	public void sendFormUrlEmail(String email, String formUrl) {
+	@Value("${form.basepath}")
+	private String baseUrl;
+	
+	public void sendFormUrlEmail(Form form) {
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setFrom("no-reply-contact-tracing@gmail.com");
-		message.setTo(email);
+		message.setTo(form.getUserRegistration().getEmail());
 		message.setSubject("Contact Tracing Form URL");
-		message.setText(formUrl);
+		message.setText(baseUrl + form.getFormId());
 
 		emailSender.send(message);
 	}
 
-	public void sendPersonalQRCodeEmail(Subject subject) {
+	public void sendPersonalQRCodeEmail(UserProfile userProfile) {
 		MimeMessage message = emailSender.createMimeMessage();
 		try {
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 			helper.setFrom("no-reply-contact-tracing@gmail.com");
-			helper.setTo(subject.getEmail());
+			helper.setTo(userProfile.getEmail());
 			helper.setSubject("Contact Tracing Identification QR Code");
 			helper.setText(
 					"Attached is your personal identification QR Code. Please use your id number as password to access the document.");
@@ -73,7 +78,7 @@ public class EmailService {
 
 			textStream.setLeading(20f);
 			textStream.newLineAtOffset(25, 620);
-			textStream.showText("Dear " + StringUtils.capitalize(subject.getFirstName()) + ",");
+			textStream.showText("Dear " + StringUtils.capitalize(userProfile.getFirstName()) + ",");
 			textStream.newLine();
 			textStream.newLine();
 			textStream.newLine();
@@ -100,23 +105,23 @@ public class EmailService {
 			textStream.showText("Your Contact Tracing Team");
 			textStream.endText();
 
-			File attachmentImage = new File(subject.getSubjectId() + "attachment.png");
+			File attachmentImage = new File(userProfile.getUserProfileId() + "attachment.png");
 			FileUtils.writeByteArrayToFile(attachmentImage,
-					QRCodeUtility.generateQRCode(subject.getSubjectId().toString(), 200, 200));
-			PDImageXObject image = PDImageXObject.createFromFile(subject.getSubjectId() + "attachment.png", document);
+					QRCodeUtility.generateQRCode(userProfile.getUserProfileId().toString(), 200, 200));
+			PDImageXObject image = PDImageXObject.createFromFile(userProfile.getUserProfileId() + "attachment.png", document);
 			textStream.drawImage(image, 8, 80);
 			textStream.close();
 
 			AccessPermission accessPermission = new AccessPermission();
 			accessPermission.setCanModify(false);
 			accessPermission.setCanPrint(true);
-			StandardProtectionPolicy standardProtectionPolicy = new StandardProtectionPolicy(subject.getIdNumber(),
-					subject.getIdNumber(), accessPermission);
+			StandardProtectionPolicy standardProtectionPolicy = new StandardProtectionPolicy(userProfile.getIdNumber(),
+					userProfile.getIdNumber(), accessPermission);
 			document.protect(standardProtectionPolicy);
-			document.save(subject.getSubjectId() + "attachment.pdf");
+			document.save(userProfile.getUserProfileId() + "attachment.pdf");
 			document.close();
 
-			File attachmentFile = new File(subject.getSubjectId() + "attachment.pdf");
+			File attachmentFile = new File(userProfile.getUserProfileId() + "attachment.pdf");
 			FileSystemResource file = new FileSystemResource(attachmentFile);
 			helper.addAttachment("attachment.pdf", file);
 			emailSender.send(message);
@@ -141,36 +146,36 @@ public class EmailService {
 			helper.setSubject("Contact Tracing Daily Report");
 			helper.setText("Attached is the updated report of the registered contact tracing subjects.");
 
-			List<Subject> subjectList = subjectService.getSubjects();
-			for (Subject subject : subjectList) {
-				if(!subject.getTemperatureRecords().isEmpty()) {
-					for(SubjectTemperature subjectTemperature : subject.getTemperatureRecords()) {
-						List<String> fields = Arrays.asList(String.valueOf(subject.getSubjectId()), 
-								subject.getFirstName(),
-								subject.getMiddleName(), 
-								subject.getLastName(), 
-								subject.getIdNumber(),
-								subject.getContactNumber(), 
-								subject.getEmail(), 
-								subject.getPosition(), 
-								subject.getDepartment(),
-								String.valueOf(subject.isAgreedDataPrivacyConsent()),
-								String.valueOf(subjectTemperature.getTemperature()),
-								subjectTemperature.getAreaCode(),
-								String.valueOf(subjectTemperature.getRecordDate()));
+			List<UserProfile> userProfileList = userService.getUserProfiles();
+			for (UserProfile userProfile : userProfileList) {
+				if(!userProfile.getTemperatureRecords().isEmpty()) {
+					for(TemperatureRecord temperatureRecord : userProfile.getTemperatureRecords()) {
+						List<String> fields = Arrays.asList(String.valueOf(userProfile.getUserProfileId()), 
+								userProfile.getFirstName(),
+								userProfile.getMiddleName(), 
+								userProfile.getLastName(), 
+								userProfile.getIdNumber(),
+								userProfile.getContactNumber(), 
+								userProfile.getEmail(), 
+								userProfile.getPosition(), 
+								userProfile.getDepartment(),
+								String.valueOf(userProfile.isUserAgreementAccepted()),
+								String.valueOf(temperatureRecord.getTemperature()),
+								temperatureRecord.getAreaCode(),
+								String.valueOf(temperatureRecord.getRecordDate()));
 						csvPrinter.printRecord(fields);
 					}
 				} else {
-					List<String> fields = Arrays.asList(String.valueOf(subject.getSubjectId()), 
-							subject.getFirstName(),
-							subject.getMiddleName(), 
-							subject.getLastName(), 
-							subject.getIdNumber(),
-							subject.getContactNumber(), 
-							subject.getEmail(), 
-							subject.getPosition(), 
-							subject.getDepartment(),
-							String.valueOf(subject.isAgreedDataPrivacyConsent()));
+					List<String> fields = Arrays.asList(String.valueOf(userProfile.getUserProfileId()), 
+							userProfile.getFirstName(),
+							userProfile.getMiddleName(), 
+							userProfile.getLastName(), 
+							userProfile.getIdNumber(),
+							userProfile.getContactNumber(), 
+							userProfile.getEmail(), 
+							userProfile.getPosition(), 
+							userProfile.getDepartment(),
+							String.valueOf(userProfile.isUserAgreementAccepted()));
 					csvPrinter.printRecord(fields);
 				}
 				

@@ -11,27 +11,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thesisproject.ct.contacttracingservice.entity.SystemVariableEntity;
-import com.thesisproject.ct.contacttracingservice.service.SystemService;
+import com.thesisproject.ct.contacttracingservice.service.ApplicationService;
 
 @RestController
 @RequestMapping("/api/system")
-public class SystemController {
+public class ApplicationController {
 	
 	@Autowired
-	private SystemService systemService;
+	private ApplicationService applicationService;
 	
 	@GetMapping
 	public ResponseEntity<List<SystemVariableEntity>> getSystemVariables() {
-		return ResponseEntity.ok(systemService.getSystemVariables());
+		return ResponseEntity.ok(applicationService.getSystemVariables());
 	}
 	
 	@GetMapping(path = "/variables")
 	public ResponseEntity<List<SystemVariableEntity>> getSystemVariablesByGroup(@RequestParam(name = "variablegroup") String variableGroup) {
-		return ResponseEntity.ok(systemService.getSystemVariables(variableGroup));
+		return ResponseEntity.ok(applicationService.getSystemVariables(variableGroup));
 	}
 	
 	@PostMapping(path = "/init")
 	public ResponseEntity<List<SystemVariableEntity>> initializeSystemVariables() {
-		return ResponseEntity.ok(systemService.initializeSystemVariables());
+		return ResponseEntity.ok(applicationService.initializeSystemVariables());
 	}
 }

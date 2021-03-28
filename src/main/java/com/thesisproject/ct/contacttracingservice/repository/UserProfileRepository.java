@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.thesisproject.ct.contacttracingservice.entity.SubjectEntity;
+import com.thesisproject.ct.contacttracingservice.entity.UserProfileEntity;
 
 @Repository
-public interface SubjectRepository extends JpaRepository<SubjectEntity, UUID> {
+public interface UserProfileRepository extends JpaRepository<UserProfileEntity, UUID> {
 
 }

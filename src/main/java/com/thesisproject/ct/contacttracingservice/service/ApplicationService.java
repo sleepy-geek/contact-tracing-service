@@ -12,7 +12,7 @@ import com.thesisproject.ct.contacttracingservice.entity.SystemVariableEntity;
 import com.thesisproject.ct.contacttracingservice.repository.SystemVariableRepository;
 
 @Service
-public class SystemService {
+public class ApplicationService {
 	@Autowired
 	private SystemVariableRepository systemVariableRepository;
 	

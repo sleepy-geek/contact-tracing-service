@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.thesisproject.ct.contacttracingservice.model.Subject;
-import com.thesisproject.ct.contacttracingservice.service.SubjectService;
-import com.thesisproject.ct.contacttracingservice.service.SystemService;
+import com.thesisproject.ct.contacttracingservice.model.UserProfile;
+import com.thesisproject.ct.contacttracingservice.service.UserService;
+import com.thesisproject.ct.contacttracingservice.service.ApplicationService;
 
 import io.swagger.models.properties.UUIDProperty;
 import springfox.documentation.annotations.ApiIgnore;
@@ -28,59 +28,59 @@ import springfox.documentation.annotations.ApiIgnore;
 public class AdminViewController {
 	
 	@Autowired
-	private SystemService systemService;
+	private ApplicationService applicationService;
 	
 	@Autowired
-	private SubjectService subjectService;
+	private UserService userService;
 	
 	@GetMapping(path = "/home")
 	public String getAdminHomeView(ModelMap model) {
 		return "adminFormView";
 	}
 	
-	@GetMapping(path = "/update-subject-details")
-	public ModelAndView getSubjectEditorView(ModelMap model) {
-		model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
-		return new ModelAndView("subjectEditorFormView", "subject", new Subject());
-	}
-	
-	@PostMapping(path = "/update-subject-details/search")
-	public ModelAndView getSubjectEditorSearchView(@RequestParam(name = "subjectId") String subjectId,
-			 									   ModelMap model) {
-		Subject subject = new Subject();
-		try {
-			subject = subjectService.getSubject(UUID.fromString(subjectId));
-		} catch(Exception e) {
-			
-		}
-		
-		
-		
-		model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
-		return new ModelAndView("subjectEditorFormView", "subject", subject);
-	}
-	
-	@PostMapping(path = "/update-subject-details/save")
-	public String getSubjectEditorSaveView(@Valid @ModelAttribute(name = "subject") Subject subject,
-			 							BindingResult result,
-			 							ModelMap model) {
-		if(result.hasErrors() ) {
-			model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
-			model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
-			return "subjectEditorFormView";
-		}
-		
-		subject = subjectService.putSubject(subject.getSubjectId(), subject);
-		
-		model.addAttribute("validPositions", systemService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", systemService.getSystemVariablesKeyValue("DEPARTMENT"));
-		return "subjectEditorFormView";
-	}
-	
-	@GetMapping(path = "/update-system-details")
-	public String getSystemEditorView(ModelMap model) {
-		return "adminFormView";
-	}
+//	@GetMapping(path = "/update-subject-details")
+//	public ModelAndView getSubjectEditorView(ModelMap model) {
+//		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+//		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+//		return new ModelAndView("subjectEditorFormView", "subject", new UserProfile());
+//	}
+//	
+//	@PostMapping(path = "/update-subject-details/search")
+//	public ModelAndView getSubjectEditorSearchView(@RequestParam(name = "subjectId") String subjectId,
+//			 									   ModelMap model) {
+//		UserProfile userProfile = new UserProfile();
+//		try {
+//			userProfile = userService.getSubject(UUID.fromString(subjectId));
+//		} catch(Exception e) {
+//			
+//		}
+//		
+//		
+//		
+//		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+//		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+//		return new ModelAndView("subjectEditorFormView", "subject", userProfile);
+//	}
+//	
+//	@PostMapping(path = "/update-subject-details/save")
+//	public String getSubjectEditorSaveView(@Valid @ModelAttribute(name = "subject") UserProfile userProfile,
+//			 							BindingResult result,
+//			 							ModelMap model) {
+//		if(result.hasErrors() ) {
+//			model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+//			model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+//			return "subjectEditorFormView";
+//		}
+//		
+//		userProfile = userService.putSubject(userProfile.getSubjectId(), userProfile);
+//		
+//		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+//		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+//		return "subjectEditorFormView";
+//	}
+//	
+//	@GetMapping(path = "/update-system-details")
+//	public String getSystemEditorView(ModelMap model) {
+//		return "adminFormView";
+//	}
 }

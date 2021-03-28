@@ -10,16 +10,16 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.thesisproject.ct.contacttracingservice.model.SubjectImage;
+import com.thesisproject.ct.contacttracingservice.model.UserImage;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(schema = "public", name="tbl_subject_image")
+@Table(schema = "public", name="tbl_user_image")
 @Data
 @NoArgsConstructor
-public class SubjectImageEntity {
+public class UserImageEntity {
 	
 	@Id
 	@GeneratedValue(generator = "uuidGenerator")
@@ -27,8 +27,8 @@ public class SubjectImageEntity {
 	@Column(name = "image_id")
 	private UUID imageId;
 	
-	@Column(name = "subject_id", nullable = false)
-	private UUID subjectId;
+	@Column(name = "user_profile_id", nullable = false)
+	private UUID userProfileId;
 	
 	@Column(name = "data", nullable = false)
 	private byte[] data;
@@ -39,10 +39,10 @@ public class SubjectImageEntity {
 	@Column(name = "file_type", nullable = false)
 	private String type;
 	
-	public SubjectImageEntity(SubjectImage subjectImage) {
-		this.imageId = subjectImage.getImageId();
-		this.data = subjectImage.getData();
-		this.fileName = subjectImage.getFileName();
-		this.type = subjectImage.getType();
+	public UserImageEntity(UserImage userImage) {
+		this.imageId = userImage.getImageId();
+		this.data = userImage.getData();
+		this.fileName = userImage.getFileName();
+		this.type = userImage.getType();
 	}
 }

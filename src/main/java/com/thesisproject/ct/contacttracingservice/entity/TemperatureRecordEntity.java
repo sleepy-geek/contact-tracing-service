@@ -11,25 +11,25 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.thesisproject.ct.contacttracingservice.model.SubjectTemperature;
+import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(schema = "public", name="tbl_subject_temperature")
+@Table(schema = "public", name="tbl_temperature_record")
 @Data
 @NoArgsConstructor
-public class SubjectTemperatureEntity {
+public class TemperatureRecordEntity {
 	
 	@Id
 	@GeneratedValue(generator = "uuidGenerator")
 	@GenericGenerator(name = "uuidGenerator", strategy = "uuid2")
-	@Column(name = "temp_id")
-	private UUID temperatureId;
+	@Column(name = "rec_id")
+	private UUID recordId;
 	
-	@Column(name = "subject_id", nullable = false)
-	private UUID subjectId;
+	@Column(name = "user_profile_id", nullable = false)
+	private UUID userProfileId;
 	
 	@Column(name = "temperature", nullable = false)
 	private Double temperature;
@@ -40,11 +40,11 @@ public class SubjectTemperatureEntity {
 	@Column(name = "area_code", nullable = false)
 	private String areaCode;
 	
-	public SubjectTemperatureEntity(SubjectTemperature subjectTemperature) {
-		this.temperatureId = subjectTemperature.getTemperatureId();
-		this.subjectId = subjectTemperature.getSubjectId();
-		this.temperature = subjectTemperature.getTemperature();
-		this.recordDate = subjectTemperature.getRecordDate();
-		this.areaCode = subjectTemperature.getAreaCode();
+	public TemperatureRecordEntity(TemperatureRecord temperatureRecord) {
+		this.recordId = temperatureRecord.getRecordId();
+		this.userProfileId = temperatureRecord.getUserProfileId();
+		this.temperature = temperatureRecord.getTemperature();
+		this.recordDate = temperatureRecord.getRecordDate();
+		this.areaCode = temperatureRecord.getAreaCode();
 	}
 }
