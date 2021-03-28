@@ -4,8 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -15,22 +17,19 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FileUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+import org.xhtmlrenderer.pdf.PDFEncryption;
 
+import com.lowagie.text.DocumentException;
 import com.thesisproject.ct.contacttracingservice.enums.SubjectTableHeaders;
 import com.thesisproject.ct.contacttracingservice.model.Form;
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
@@ -39,6 +38,9 @@ import com.thesisproject.ct.contacttracingservice.util.QRCodeUtility;
 
 @Service
 public class EmailService {
+	
+	@Autowired
+	private SpringTemplateEngine templateEngine;
 
 	@Autowired
 	private JavaMailSender emailSender;
@@ -50,79 +52,56 @@ public class EmailService {
 	private String baseUrl;
 	
 	public void sendFormUrlEmail(Form form) {
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom("no-reply-contact-tracing@gmail.com");
-		message.setTo(form.getUserRegistration().getEmail());
-		message.setSubject("Contact Tracing Form URL");
-		message.setText(baseUrl + form.getFormId());
-
+		MimeMessage message = emailSender.createMimeMessage();
+		try {
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			helper.setTo(form.getUserRegistration().getEmail());
+			helper.setFrom("no-reply@contacttracingservice.com");
+			helper.setSubject("Contact Tracing Form URL");
+			
+			Context context = new Context();
+			context.setVariable("firstName", form.getUserRegistration().getFirstName());
+			context.setVariable("formUrl", this.baseUrl+form.getFormId());
+			helper.setText(templateEngine.process("form-url-email", context),  true);
+			
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
 		emailSender.send(message);
 	}
 
 	public void sendPersonalQRCodeEmail(UserProfile userProfile) {
 		MimeMessage message = emailSender.createMimeMessage();
-		try {
+		File attachmentFile = new File(userProfile.getUserProfileId() + "attachment.pdf");
+		File attachmentImage = new File(userProfile.getUserProfileId() + "attachment.png");
+		
+		try(OutputStream outputStream = new FileOutputStream(attachmentFile)) {
+			FileUtils.writeByteArrayToFile(attachmentImage, QRCodeUtility.generateQRCode(userProfile.getUserProfileId().toString(), 200, 200));
+			FileSystemResource file = new FileSystemResource(attachmentFile);
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 			helper.setFrom("no-reply-contact-tracing@gmail.com");
 			helper.setTo(userProfile.getEmail());
 			helper.setSubject("Contact Tracing Identification QR Code");
-			helper.setText(
-					"Attached is your personal identification QR Code. Please use your id number as password to access the document.");
+			
+			Context context = new Context();
+			context.setVariable("firstName", userProfile.getFirstName());
+			context.setVariable("imageUrl","data:image/png;base64," + Base64.getEncoder().encodeToString(QRCodeUtility.generateQRCode(userProfile.getUserProfileId().toString(), 200, 200)));
+			helper.setText(templateEngine.process("personal-qr-code-email", context),  true);
+			
+			ITextRenderer renderer = new ITextRenderer();
+			String html = templateEngine.process("personal-qr-code-attachment", context);
+			PDFEncryption encryption = new PDFEncryption(userProfile.getIdNumber().getBytes(), userProfile.getIdNumber().getBytes());
+			renderer.setDocumentFromString(html);
+			renderer.setPDFEncryption(encryption);
+			renderer.layout();
+			renderer.createPDF(outputStream);
+			
+			
 
-			PDDocument document = new PDDocument();
-			PDPage page1 = new PDPage();
-			document.addPage(page1);
-			PDPageContentStream textStream = new PDPageContentStream(document, page1);
-			textStream.setFont(PDType1Font.COURIER, 10);
-			textStream.beginText();
-
-			textStream.setLeading(20f);
-			textStream.newLineAtOffset(25, 620);
-			textStream.showText("Dear " + StringUtils.capitalize(userProfile.getFirstName()) + ",");
-			textStream.newLine();
-			textStream.newLine();
-			textStream.newLine();
-			textStream.showText(
-					"We are happy to inform you that you have successfully registered your data to the Contact");
-			textStream.newLine();
-			textStream.showText(
-					"Tracing Service. You may now use the system facilities for contactless tracking. Please use");
-			textStream.newLine();
-			textStream.showText(
-					"the QR Code on this document for your personal identification at each contact tracing area.");
-			textStream.newLine();
-			textStream.newLine();
-			textStream.newLine();
-			textStream.showText("Thank you and take care.");
-			textStream.newLine();
-			textStream.newLine();
-			textStream.newLine();
-			textStream.newLine();
-			textStream.newLine();
-			textStream.newLine();
-			textStream.showText("Sincerely,");
-			textStream.newLine();
-			textStream.showText("Your Contact Tracing Team");
-			textStream.endText();
-
-			File attachmentImage = new File(userProfile.getUserProfileId() + "attachment.png");
-			FileUtils.writeByteArrayToFile(attachmentImage,
-					QRCodeUtility.generateQRCode(userProfile.getUserProfileId().toString(), 200, 200));
-			PDImageXObject image = PDImageXObject.createFromFile(userProfile.getUserProfileId() + "attachment.png", document);
-			textStream.drawImage(image, 8, 80);
-			textStream.close();
-
-			AccessPermission accessPermission = new AccessPermission();
-			accessPermission.setCanModify(false);
-			accessPermission.setCanPrint(true);
-			StandardProtectionPolicy standardProtectionPolicy = new StandardProtectionPolicy(userProfile.getIdNumber(),
-					userProfile.getIdNumber(), accessPermission);
-			document.protect(standardProtectionPolicy);
-			document.save(userProfile.getUserProfileId() + "attachment.pdf");
-			document.close();
-
-			File attachmentFile = new File(userProfile.getUserProfileId() + "attachment.pdf");
-			FileSystemResource file = new FileSystemResource(attachmentFile);
 			helper.addAttachment("attachment.pdf", file);
 			emailSender.send(message);
 
@@ -131,6 +110,8 @@ public class EmailService {
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
 			e.printStackTrace();
 		}
 	}

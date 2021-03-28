@@ -10,10 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.enums.FormStatus;
-import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
-import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.Form;
-import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.model.UserRegistration;
 import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 
@@ -25,10 +22,6 @@ public class FormService {
 	
 	@Autowired
 	private FormRepository formRepository;
-	
-	@Autowired
-	private EmailService emailService;
-	
 	
 	public String sendFormUrlToEmail(String email) {
 		return "OK";
@@ -57,8 +50,6 @@ public class FormService {
 		FormEntity formEntity = formRepository.getOne(form.getFormId());
 		formEntity.setStatus(FormStatus.SUBMITTED.name());
 		formEntity.setSubmittedDate(LocalDateTime.now());
-		
-		//emailService.sendPersonalQRCodeEmail(userProfile);
 		
 		formRepository.saveAndFlush(formEntity);
 		return null;

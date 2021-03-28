@@ -96,6 +96,7 @@ public class UserViewController {
 		
 		userService.postUserProfile(userProfile);
 		formService.submitForm(form);
+		emailService.sendPersonalQRCodeEmail(userProfile);
 		return "user-profile-success";
 	}
 }
