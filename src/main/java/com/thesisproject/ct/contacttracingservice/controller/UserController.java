@@ -43,23 +43,23 @@ public class UserController {
 	}
 	
 	@GetMapping(path = "/{userProfileId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserProfile> getSubject(@PathVariable(name = "userProfileId", required = true) UUID userProfileId) throws NotFoundException {
+	public ResponseEntity<UserProfile> getUserProfile(@PathVariable(name = "userProfileId", required = true) UUID userProfileId) throws NotFoundException {
 		return ResponseEntity.ok().body(userService.getUserProfile(userProfileId));
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserProfile> postSubject(@RequestBody UserProfile userProfile) throws BadRequestException {
+	public ResponseEntity<UserProfile> postUserProfile(@RequestBody UserProfile userProfile) throws BadRequestException {
 		return ResponseEntity.ok().body(userService.postUserProfile(userProfile));
 	}
 	
 	@PutMapping(path = "/{subjectId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserProfile> postSubject(@PathVariable(name = "subjectId", required = true) UUID subjectId,
+	public ResponseEntity<UserProfile> putUserProfile(@PathVariable(name = "subjectId", required = true) UUID subjectId,
 											   @RequestBody UserProfile userProfile) throws BadRequestException, NotFoundException {
 		return ResponseEntity.ok().body(userService.putUserProfile(subjectId, userProfile));
 	}
 	
 	@PostMapping(path = "/{subjectId}/temperature-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TemperatureRecord> postSubjectTemperature(@PathVariable UUID subjectId,
+	public ResponseEntity<TemperatureRecord> postTemperatureRecord(@PathVariable UUID subjectId,
 																	 @RequestBody TemperatureRecord temperatureRecord) throws BadRequestException {
 		return ResponseEntity.ok().body(userService.postTemperatureRecord(subjectId, temperatureRecord));
 	}
