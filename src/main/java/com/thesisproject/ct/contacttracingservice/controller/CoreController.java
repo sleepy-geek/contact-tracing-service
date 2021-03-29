@@ -20,7 +20,7 @@ public class CoreController {
 	
 	@GetMapping(produces = MediaType.IMAGE_PNG_VALUE)
 	public ResponseEntity<byte[]> getFormsQRCode() {
-		return ResponseEntity.ok(QRCodeUtility.generateQRCode("https://contact-tracing-service.herokuapp.com/forms", 500, 500));
+		return ResponseEntity.ok(QRCodeUtility.generateQRCode("https://contact-tracing-service.herokuapp.com/cts", 500, 500));
 	}
 	@GetMapping(path = "/login")
 	public ModelAndView login(ModelMap model) {

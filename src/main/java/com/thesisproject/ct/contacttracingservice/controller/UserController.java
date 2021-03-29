@@ -37,8 +37,8 @@ public class UserController {
 	}
 	
 	@PostMapping(path = "/export")
-	public ResponseEntity<List<UserProfile>> exportSubjects() {
-		emailService.sendSubjectRecordsReport();
+	public ResponseEntity<List<UserProfile>> exportUsers() {
+		emailService.sendUserProfilesReport();
 		return ResponseEntity.ok(null);
 	}
 	
@@ -52,15 +52,15 @@ public class UserController {
 		return ResponseEntity.ok().body(userService.postUserProfile(userProfile));
 	}
 	
-	@PutMapping(path = "/{subjectId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserProfile> putUserProfile(@PathVariable(name = "subjectId", required = true) UUID subjectId,
+	@PutMapping(path = "/{userProfileId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<UserProfile> putUserProfile(@PathVariable(name = "subjectId", required = true) UUID userProfileId,
 											   @RequestBody UserProfile userProfile) throws BadRequestException, NotFoundException {
-		return ResponseEntity.ok().body(userService.putUserProfile(subjectId, userProfile));
+		return ResponseEntity.ok().body(userService.putUserProfile(userProfileId, userProfile));
 	}
 	
-	@PostMapping(path = "/{subjectId}/temperature-record", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<TemperatureRecord> postTemperatureRecord(@PathVariable UUID subjectId,
+	@PostMapping(path = "/{userProfileId}/temperaturerecords", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<TemperatureRecord> postTemperatureRecord(@PathVariable UUID userProfileId,
 																	 @RequestBody TemperatureRecord temperatureRecord) throws BadRequestException {
-		return ResponseEntity.ok().body(userService.postTemperatureRecord(subjectId, temperatureRecord));
+		return ResponseEntity.ok().body(userService.postTemperatureRecord(userProfileId, temperatureRecord));
 	}
 }

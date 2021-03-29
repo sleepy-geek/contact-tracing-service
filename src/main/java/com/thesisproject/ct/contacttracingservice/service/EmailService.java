@@ -113,10 +113,17 @@ public class EmailService {
 			e.printStackTrace();
 		} catch (DocumentException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				FileUtils.forceDelete(attachmentImage);
+				FileUtils.forceDelete(attachmentFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	public void sendSubjectRecordsReport() {
+	public void sendUserProfilesReport() {
 		MimeMessage message = emailSender.createMimeMessage();
 		File file = new File("report.csv");
 		try(FileOutputStream fos = new FileOutputStream(file); ByteArrayOutputStream out = new ByteArrayOutputStream(); CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), CSVFormat.DEFAULT.withHeader(SubjectTableHeaders.class))) {
@@ -125,7 +132,7 @@ public class EmailService {
 			helper.setFrom("no-reply-contact-tracing@gmail.com");
 			helper.setTo("cts.service.2021@gmail.com");
 			helper.setSubject("Contact Tracing Daily Report");
-			helper.setText("Attached is the updated report of the registered contact tracing subjects.");
+			helper.setText("Attached is the updated report of the registered contact tracing users.");
 
 			List<UserProfile> userProfileList = userService.getUserProfiles();
 			for (UserProfile userProfile : userProfileList) {
@@ -170,10 +177,8 @@ public class EmailService {
 			fos.close();
 			FileUtils.forceDelete(file);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

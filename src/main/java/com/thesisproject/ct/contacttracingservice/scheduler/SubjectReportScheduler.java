@@ -16,6 +16,6 @@ public class SubjectReportScheduler {
 	
 	@Scheduled(cron = "@daily")
 	public void sendSubectRecordReports() {
-		emailService.sendSubjectRecordsReport();
+		emailService.sendUserProfilesReport();
 	}
 }
