@@ -24,11 +24,11 @@ public class CoreController {
 	}
 	@GetMapping(path = "/login")
 	public ModelAndView login(ModelMap model) {
-		return new ModelAndView("/login", "admin", new Admin());
+		return new ModelAndView("login", "admin", new Admin());
 	}
 	
 	@GetMapping(path = "/logout")
 	public ModelAndView logout(ModelMap model) {
-		return new ModelAndView("/login", "admin", new Admin());
+		return new ModelAndView("login", "admin", new Admin());
 	}
 }
