@@ -134,7 +134,7 @@ public class AdminViewController {
 	
 	@PostMapping(path = "/usermanagement/delete")
 	public String postUserManagementDelete(SearchObject searchObject,
-			                         	   @Valid UserProfile userProfile,
+			                         	   UserProfile userProfile,
 			                         	   BindingResult result,
 			                         	   ModelMap model) {
 		
