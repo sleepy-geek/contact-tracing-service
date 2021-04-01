@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,9 +57,14 @@ public class UserController {
 	}
 	
 	@PutMapping(path = "/{userProfileId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserProfile> putUserProfile(@PathVariable(name = "subjectId", required = true) UUID userProfileId,
+	public ResponseEntity<UserProfile> putUserProfile(@PathVariable(name = "userProfileId", required = true) UUID userProfileId,
 											   @RequestBody UserProfile userProfile) throws BadRequestException, NotFoundException {
 		return ResponseEntity.ok().body(userService.putUserProfile(userProfileId, userProfile));
+	}
+	
+	@DeleteMapping(path = "/{userProfileId}")
+	public void deleteUserProfile(@PathVariable(name = "userProfileId", required = true) UUID userProfileId) {
+		userService.deleteUserProfile(userProfileId);
 	}
 	
 	@PostMapping(path = "/{userProfileId}/temperaturerecords", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
