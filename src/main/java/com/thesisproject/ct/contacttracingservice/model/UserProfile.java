@@ -6,11 +6,13 @@ import java.util.List;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thesisproject.ct.contacttracingservice.entity.UserProfileEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -34,6 +36,9 @@ public class UserProfile extends UserRegistration{
 	
 	@AssertTrue(message = "Please accept user agreement and data privacy agreement.")
 	private boolean userAgreementAccepted;
+	
+	@JsonIgnore
+	private String lastTemperatureRecord;
 	
 	private List<TemperatureRecord> temperatureRecords;
 	private UserImage image;

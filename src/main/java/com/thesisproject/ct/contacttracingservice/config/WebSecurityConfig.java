@@ -18,12 +18,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 	public void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable()
 			.authorizeRequests()
-			.antMatchers("/", "/cts/**", "/api/**").permitAll()
+			.antMatchers("/cts/**", "/api/**").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.formLogin()
 			.loginPage("/login").permitAll()
-			.defaultSuccessUrl("/cts")
+			.defaultSuccessUrl("/")
 			.and()
 			.logout().permitAll();
 	}

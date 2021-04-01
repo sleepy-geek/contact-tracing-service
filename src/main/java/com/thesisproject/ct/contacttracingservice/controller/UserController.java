@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
+import com.thesisproject.ct.contacttracingservice.model.UserImage;
 import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.service.EmailService;
 import com.thesisproject.ct.contacttracingservice.service.UserService;
@@ -31,15 +34,15 @@ public class UserController {
 	@Autowired
 	private EmailService emailService;
 	
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<UserProfile>> getSubjects() {
-		return ResponseEntity.ok().body(userService.getUserProfiles());
-	}
-	
 	@PostMapping(path = "/export")
 	public ResponseEntity<List<UserProfile>> exportUsers() {
 		emailService.sendUserProfilesReport();
 		return ResponseEntity.ok(null);
+	}
+	
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<UserProfile>> getUserProfiles(@RequestParam(name = "filter", required = false) String filter) {
+		return ResponseEntity.ok().body(userService.getUserProfiles(filter));
 	}
 	
 	@GetMapping(path = "/{userProfileId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -62,5 +65,10 @@ public class UserController {
 	public ResponseEntity<TemperatureRecord> postTemperatureRecord(@PathVariable UUID userProfileId,
 																	 @RequestBody TemperatureRecord temperatureRecord) throws BadRequestException {
 		return ResponseEntity.ok().body(userService.postTemperatureRecord(userProfileId, temperatureRecord));
+	}
+	
+	@PostMapping(path ="/{userProfileId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<UserImage> postUserImage(MultipartFile imageFile) {
+		return ResponseEntity.ok(null);
 	}
 }

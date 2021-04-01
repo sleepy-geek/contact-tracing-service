@@ -134,7 +134,7 @@ public class EmailService {
 			helper.setSubject("Contact Tracing Daily Report");
 			helper.setText("Attached is the updated report of the registered contact tracing users.");
 
-			List<UserProfile> userProfileList = userService.getUserProfiles();
+			List<UserProfile> userProfileList = userService.getUserProfiles(null);
 			for (UserProfile userProfile : userProfileList) {
 				if(!userProfile.getTemperatureRecords().isEmpty()) {
 					for(TemperatureRecord temperatureRecord : userProfile.getTemperatureRecords()) {

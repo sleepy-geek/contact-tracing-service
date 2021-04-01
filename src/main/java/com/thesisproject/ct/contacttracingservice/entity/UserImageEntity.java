@@ -1,5 +1,6 @@
 package com.thesisproject.ct.contacttracingservice.entity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -9,6 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import com.thesisproject.ct.contacttracingservice.model.UserImage;
 
@@ -38,6 +43,18 @@ public class UserImageEntity {
 	
 	@Column(name = "file_type", nullable = false)
 	private String type;
+	
+	@CreatedDate
+	private LocalDateTime createdDate;
+	
+	@CreatedBy
+	private String createdBy;
+	
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
+	
+	@LastModifiedBy
+	private String lastModifiedBy;
 	
 	public UserImageEntity(UserImage userImage) {
 		this.imageId = userImage.getImageId();

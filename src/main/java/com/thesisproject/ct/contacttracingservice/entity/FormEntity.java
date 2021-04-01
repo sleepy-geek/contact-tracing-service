@@ -11,6 +11,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import com.thesisproject.ct.contacttracingservice.model.Form;
 import com.thesisproject.ct.contacttracingservice.model.UserRegistration;
@@ -36,11 +40,21 @@ public class FormEntity {
 	@Column(name = "status", nullable = false)
 	private String status;
 	
+	@CreatedDate
 	@Column(name = "created_dt", nullable = false)
 	private LocalDateTime createdDate;
 	
 	@Column(name = "submitted_dt", nullable = true)
 	private LocalDateTime submittedDate;
+	
+	@CreatedBy
+	private String createdBy;
+	
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
+	
+	@LastModifiedBy
+	private String lastModifiedBy;
 	
 	public FormEntity(Form form) {
 		this.formId = form.getFormId();

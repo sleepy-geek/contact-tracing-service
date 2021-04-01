@@ -10,6 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
 
@@ -39,6 +43,18 @@ public class TemperatureRecordEntity {
 	
 	@Column(name = "area_code", nullable = false)
 	private String areaCode;
+	
+	@CreatedDate
+	private LocalDateTime createdDate;
+	
+	@CreatedBy
+	private String createdBy;
+	
+	@LastModifiedDate
+	private LocalDateTime lastModifiedDate;
+	
+	@LastModifiedBy
+	private String lastModifiedBy;
 	
 	public TemperatureRecordEntity(TemperatureRecord temperatureRecord) {
 		this.recordId = temperatureRecord.getRecordId();

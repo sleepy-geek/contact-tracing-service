@@ -1,5 +1,6 @@
 package com.thesisproject.ct.contacttracingservice.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.entity.TemperatureRecordEntity;
@@ -32,25 +34,31 @@ public class UserService {
 	@Autowired 
 	private FormRepository formRepository;
 	
-	public List<UserProfile> getUserProfiles() {
-		return userProfileRepository.findAll()
-								.stream()
-								.map(UserProfile::new)
-								.map(userProfile -> {
-									userProfile.getTemperatureRecords().addAll(this.getTemperatureRecords(userProfile.getUserProfileId()));
-									return userProfile;
-								})
-								.collect(Collectors.toList());
+	public List<UserProfile> getUserProfiles(String filter) {
+		List<UserProfileEntity> entities = Optional.ofNullable(filter)
+													.map(fltr -> fltr + "%")
+													.map(StringUtils::capitalize)
+													.map(fltr -> userProfileRepository.findAllByIdNumberLikeOrFirstNameLikeOrMiddleNameLikeOrLastNameLike(fltr, fltr, fltr, fltr))
+													.orElse(userProfileRepository.findAll());
+		return entities.stream()
+						.map(UserProfile::new)
+						.map(this::populateUserProfileTemperatureRecords)
+						.collect(Collectors.toList());
 	}
 	
 	public UserProfile getUserProfile(UUID userProfileId)  {
 		return userProfileRepository.findById(userProfileId)
 								.map(UserProfile::new)
-								.map(userProfile -> {
-									userProfile.getTemperatureRecords().addAll(this.getTemperatureRecords(userProfileId));
-									return userProfile;
-								})
+								.map(this::populateUserProfileTemperatureRecords)
 					   			.orElse(new UserProfile());
+	}
+	
+	private UserProfile populateUserProfileTemperatureRecords(UserProfile userProfile) {
+		userProfile.getTemperatureRecords().addAll(this.getTemperatureRecords(userProfile.getUserProfileId()));
+		Comparator<TemperatureRecord> tempRecordDateReverseComparator = Comparator.comparing(TemperatureRecord::getRecordDate).reversed();
+		String lastTemperatureRecord = userProfile.getTemperatureRecords().stream().sorted(tempRecordDateReverseComparator).findFirst().map(String::valueOf).orElse("--");
+		userProfile.setLastTemperatureRecord(lastTemperatureRecord);
+		return userProfile;
 	}
 	
 	public List<TemperatureRecord> getTemperatureRecords(UUID userProfileId) {
