@@ -155,9 +155,7 @@ public class AdminViewController {
 			return "user-management";
 		}
 		
-		userProfile = Optional.ofNullable(userProfile)
-								.map(up -> userService.putUserProfile(up.getUserProfileId(), up))
-								.orElse(new UserProfile());
+		userService.deleteUserProfile(userProfile.getUserProfileId());
 		return "user-management";
 	}
 	
