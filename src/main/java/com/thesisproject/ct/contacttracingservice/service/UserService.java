@@ -31,6 +31,9 @@ public class UserService {
 	@Autowired
 	private TemperatureRecordRepository temperatureRecordRepository;
 	
+	@Autowired
+	private ApplicationService applicationService;
+	
 	@Autowired 
 	private FormRepository formRepository;
 	
@@ -43,6 +46,7 @@ public class UserService {
 		return entities.stream()
 						.map(UserProfile::new)
 						.map(this::populateUserProfileTemperatureRecords)
+						.map(this::populateDepartmentAndPosition)
 						.collect(Collectors.toList());
 	}
 	
@@ -50,6 +54,7 @@ public class UserService {
 		return userProfileRepository.findById(userProfileId)
 								.map(UserProfile::new)
 								.map(this::populateUserProfileTemperatureRecords)
+								.map(this::populateDepartmentAndPosition)
 					   			.orElse(new UserProfile());
 	}
 	
@@ -58,6 +63,18 @@ public class UserService {
 		Comparator<TemperatureRecord> tempRecordDateReverseComparator = Comparator.comparing(TemperatureRecord::getRecordDate).reversed();
 		String lastTemperatureRecord = userProfile.getTemperatureRecords().stream().sorted(tempRecordDateReverseComparator).findFirst().map(TemperatureRecord::getTemperature).map(String::valueOf).orElse("--");
 		userProfile.setLastTemperatureRecord(lastTemperatureRecord);
+		return userProfile;
+	}
+	
+	private UserProfile populateDepartmentAndPosition(UserProfile userProfile) {
+		Optional.ofNullable(userProfile.getDepartment())
+				.map(applicationService.getSystemVariablesKeyValue("DEPARTMENT")::get)
+				.ifPresent(userProfile::setDepartment);
+		
+		Optional.ofNullable(userProfile.getPosition())
+				.map(applicationService.getSystemVariablesKeyValue("POSITION")::get)
+				.ifPresent(userProfile::setPosition);
+		
 		return userProfile;
 	}
 	
@@ -87,6 +104,10 @@ public class UserService {
 		} else {
 			throw new NotFoundException();
 		}
+	}
+	
+	public void deleteUserProfile(UUID userProfileId) {
+		userProfileRepository.deleteById(userProfileId);
 	}
 	
 	public UserProfile getFormUser(UUID formId) {

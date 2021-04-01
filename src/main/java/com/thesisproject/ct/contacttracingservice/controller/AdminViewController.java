@@ -52,18 +52,9 @@ public class AdminViewController {
 	public String getUserManagement(SearchObject searchObject,
 									UserProfile userProfile,
 									ModelMap model) {
-		List<String> userProfileTableHeaderList = new ArrayList<>();
-		userProfileTableHeaderList.add("ID Number");
-		userProfileTableHeaderList.add("First Name");
-		userProfileTableHeaderList.add("Middle Name");
-		userProfileTableHeaderList.add("Last Name");
-		userProfileTableHeaderList.add("Contact Number");
-		userProfileTableHeaderList.add("Department");
-		userProfileTableHeaderList.add("Position");
-		userProfileTableHeaderList.add("Last Temperature Record");
-		userProfileTableHeaderList.add("");
 		
-		model.addAttribute("userProfileTableHeaders", userProfileTableHeaderList);
+		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("updateDisabled", true);
 		return "user-management";
 	}
@@ -80,18 +71,9 @@ public class AdminViewController {
 				.map(userService::getUserProfiles)
 				.ifPresent(userProfileList::addAll);
 		
-		List<String> userProfileTableHeaderList = new ArrayList<>();
-		userProfileTableHeaderList.add("ID Number");
-		userProfileTableHeaderList.add("First Name");
-		userProfileTableHeaderList.add("Middle Name");
-		userProfileTableHeaderList.add("Last Name");
-		userProfileTableHeaderList.add("Contact Number");
-		userProfileTableHeaderList.add("Department");
-		userProfileTableHeaderList.add("Position");
-		userProfileTableHeaderList.add("Last Temperature Record");
-		userProfileTableHeaderList.add("");
 		
-		model.addAttribute("userProfileTableHeaders", userProfileTableHeaderList);
+		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);
 		model.addAttribute("userProfile", userProfile);
 		model.addAttribute("updateDisabled", true);
@@ -113,18 +95,6 @@ public class AdminViewController {
 		
 		userProfile = userService.getUserProfile(userProfile.getUserProfileId());
 		
-		List<String> userProfileTableHeaderList = new ArrayList<>();
-		userProfileTableHeaderList.add("ID Number");
-		userProfileTableHeaderList.add("First Name");
-		userProfileTableHeaderList.add("Middle Name");
-		userProfileTableHeaderList.add("Last Name");
-		userProfileTableHeaderList.add("Contact Number");
-		userProfileTableHeaderList.add("Department");
-		userProfileTableHeaderList.add("Position");
-		userProfileTableHeaderList.add("Last Temperature Record");
-		userProfileTableHeaderList.add("");
-		
-		model.addAttribute("userProfileTableHeaders", userProfileTableHeaderList);
 		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
 		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);
@@ -146,18 +116,35 @@ public class AdminViewController {
 				.map(userService::getUserProfiles)
 				.ifPresent(userProfileList::addAll);
 		
-		List<String> userProfileTableHeaderList = new ArrayList<>();
-		userProfileTableHeaderList.add("ID Number");
-		userProfileTableHeaderList.add("First Name");
-		userProfileTableHeaderList.add("Middle Name");
-		userProfileTableHeaderList.add("Last Name");
-		userProfileTableHeaderList.add("Contact Number");
-		userProfileTableHeaderList.add("Department");
-		userProfileTableHeaderList.add("Position");
-		userProfileTableHeaderList.add("Last Temperature Record");
-		userProfileTableHeaderList.add("");
+		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("userProfiles", userProfileList);
+		model.addAttribute("userProfile", userProfile);
+		model.addAttribute("updateDisabled", false);
 		
-		model.addAttribute("userProfileTableHeaders", userProfileTableHeaderList);
+		if(result.hasErrors()) {
+			return "user-management";
+		}
+		
+		userProfile = Optional.ofNullable(userProfile)
+								.map(up -> userService.putUserProfile(up.getUserProfileId(), up))
+								.orElse(new UserProfile());
+		return "user-management";
+	}
+	
+	@PostMapping(path = "/usermanagement/delete")
+	public String postUserManagementDelete(SearchObject searchObject,
+			                         	   @Valid UserProfile userProfile,
+			                         	   BindingResult result,
+			                         	   ModelMap model) {
+		
+		List<UserProfile> userProfileList = new ArrayList<>();
+		
+		Optional.ofNullable(searchObject.getFilter())
+				.filter(filter -> !"".equals(filter))
+				.map(userService::getUserProfiles)
+				.ifPresent(userProfileList::addAll);
+		
 		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
 		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);

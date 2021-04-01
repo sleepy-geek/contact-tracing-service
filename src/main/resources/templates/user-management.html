@@ -13,35 +13,45 @@
 <body>
 	<nav th:replace="home::navi"></nav>
 	<div class="container border">
-		<table class="table">
-			<thead><tr>
-					<th th:colspan="${#lists.size(userProfileTableHeaders)}">Registered Users</th>
-				</tr>
-				<tr>
-					<th th:each="hdr: ${userProfileTableHeaders}" th:text="${hdr}" scope="col">header</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="userProfile: ${userProfiles}">
-					<td th:text="${userProfile.idNumber}"scope="row"></td>
-					<td th:text="${userProfile.firstName}"></td> 
-					<td th:text="${userProfile.middleName}"></td>
-					<td th:text="${userProfile.lastName}"></td>
-					<td th:text="${userProfile.contactNumber}"></td>
-					<td th:text="${userProfile.department}"></td>
-					<td th:text="${userProfile.position}"></td>
-					<td th:text="${userProfile.lastTemperatureRecord}"></td>
-					<td>
-						<form class="needs-validation" action="#" th:action="@{/usermanagement/edit}" th:object="${userProfile}" method="post">
-							<input id="hdnUserProfileId" class="form-control" type="hidden" th:value="${userProfile.userProfileId}" name="userProfileId">
-							<button type="submit" class="btn btn-primary">Edit</button>
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-			
-		<form action="#" class="row row-cols-1 needs-validation border" th:action="@{/usermanagement/update}" th:object="${userProfile}" method="post" novalidate>
+		<div class="table-responsive">
+			<table class="table table-hover table-sm">
+				<thead><tr>
+						<th th:colspan="9">Registered Users</th>
+					</tr>
+					<tr>
+						<th scope="col">ID Number</th>
+						<th scope="col">First Name</th>
+						<th scope="col">Middle Name</th>
+						<th scope="col">Last Name</th>
+						<th scope="col">Contact Number</th>
+						<th scope="col">Department</th>
+						<th scope="col">Position</th>
+						<th scope="col">Last Temperature Record</th>
+						<th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="userProfile: ${userProfiles}">
+						<td th:text="${userProfile.idNumber}"scope="row"></td>
+						<td th:text="${userProfile.firstName}"></td> 
+						<td th:text="${userProfile.middleName}"></td>
+						<td th:text="${userProfile.lastName}"></td>
+						<td th:text="${userProfile.contactNumber}"></td>
+						<td th:text="${userProfile.department}"></td>
+						<td th:text="${userProfile.position}"></td>
+						<td th:text="${userProfile.lastTemperatureRecord}"></td>
+						<td>
+							<form class="needs-validation" action="#" th:action="@{/usermanagement/edit}" th:object="${userProfile}" method="post">
+								<input id="hdnUserProfileId" class="form-control" type="hidden" th:value="${userProfile.userProfileId}" name="userProfileId">
+								<button type="submit" class="btn btn-primary">Edit</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="row row-cols-1 border">
+		<form action="#" class="row row-cols-1 needs-validation" th:action="@{/usermanagement/update}" th:object="${userProfile}" method="post" novalidate>
 			<div class="col mb-3">
 				<label class="form-label" for="txtIdNumber">ID Number</label>
 				<input id="txtIdNumber" type="text" class="form-control" placeholder="001234" th:field="*{idNumber}" th:classappend="${not #lists.isEmpty(#fields.errors('idNumber'))} ? is-invalid">
@@ -114,6 +124,13 @@
 				<button id="btnClear" type="reset" class="btn btn-secondary" th:classappend="${updateDisabled} ? disabled">Clear</button>
 			</div>
 		</form>
+		<div class="col mb-3">
+			<form action="#" th:action="@{/usermanagement/delete}" th:object="${userProfile}" method="post">
+				<input type="hidden" th:value="${userProfile.userProfileId}" name="userProfileId">
+				<button id="btnDelete" type="submit" class="btn btn-danger" th:classappend="${updateDisabled} ? disabled">Delete</button>
+			</form>
+		</div>
+		</div>
 	</div>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
