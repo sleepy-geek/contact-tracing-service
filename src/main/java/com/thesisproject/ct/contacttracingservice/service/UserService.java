@@ -56,7 +56,7 @@ public class UserService {
 	private UserProfile populateUserProfileTemperatureRecords(UserProfile userProfile) {
 		userProfile.getTemperatureRecords().addAll(this.getTemperatureRecords(userProfile.getUserProfileId()));
 		Comparator<TemperatureRecord> tempRecordDateReverseComparator = Comparator.comparing(TemperatureRecord::getRecordDate).reversed();
-		String lastTemperatureRecord = userProfile.getTemperatureRecords().stream().sorted(tempRecordDateReverseComparator).findFirst().map(String::valueOf).orElse("--");
+		String lastTemperatureRecord = userProfile.getTemperatureRecords().stream().sorted(tempRecordDateReverseComparator).findFirst().map(TemperatureRecord::getTemperature).map(String::valueOf).orElse("--");
 		userProfile.setLastTemperatureRecord(lastTemperatureRecord);
 		return userProfile;
 	}
