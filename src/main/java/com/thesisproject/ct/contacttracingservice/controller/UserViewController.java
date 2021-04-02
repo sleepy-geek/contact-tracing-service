@@ -75,8 +75,8 @@ public class UserViewController {
 		}
 		
 		userProfile = userService.getUserProfile(form.getUserRegistration().getUserProfileId());
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfile", userProfile);
 		return "user-profile";
 	}
@@ -87,8 +87,8 @@ public class UserViewController {
 			                      @Valid UserProfile userProfile,
 			                      BindingResult result,
 			                      ModelMap model) {
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfile", userProfile);
 		if(result.hasErrors()) {
 			return "user-profile";

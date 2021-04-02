@@ -9,7 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -45,12 +47,14 @@ public class UserImageEntity {
 	private String type;
 	
 	@CreatedDate
+	@CreationTimestamp
 	private LocalDateTime createdDate;
 	
 	@CreatedBy
 	private String createdBy;
 	
 	@LastModifiedDate
+	@UpdateTimestamp
 	private LocalDateTime lastModifiedDate;
 	
 	@LastModifiedBy

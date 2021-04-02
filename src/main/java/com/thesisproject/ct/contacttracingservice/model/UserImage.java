@@ -2,6 +2,8 @@ package com.thesisproject.ct.contacttracingservice.model;
 
 import java.util.UUID;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.thesisproject.ct.contacttracingservice.entity.UserImageEntity;
 
 import lombok.Data;
@@ -20,5 +22,14 @@ public class UserImage {
 		this.data = entity.getData();
 		this.fileName = entity.getFileName();
 		this.type = entity.getType();
+	}
+	
+	public UserImage(MultipartFile imageFile) {
+		try {
+			this.data = imageFile.getBytes();
+			this.fileName = imageFile.getName();
+			this.type = imageFile.getContentType();
+		} catch(Exception e) {
+		}
 	}
 }

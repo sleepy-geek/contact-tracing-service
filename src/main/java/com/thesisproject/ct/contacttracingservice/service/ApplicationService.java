@@ -1,36 +1,117 @@
 package com.thesisproject.ct.contacttracingservice.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.thesisproject.ct.contacttracingservice.entity.SystemVariableEntity;
-import com.thesisproject.ct.contacttracingservice.repository.SystemVariableRepository;
+import com.thesisproject.ct.contacttracingservice.entity.ApplicationVariableEntity;
+import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
+import com.thesisproject.ct.contacttracingservice.model.ApplicationVariable;
+import com.thesisproject.ct.contacttracingservice.model.DetectionVariable;
+import com.thesisproject.ct.contacttracingservice.repository.ApplicationVariableRepository;
 
 @Service
 public class ApplicationService {
 	@Autowired
-	private SystemVariableRepository systemVariableRepository;
+	private ApplicationVariableRepository applicationVariableRepository;
 	
-	public List<SystemVariableEntity> getSystemVariables() {
-		return systemVariableRepository.findAll();
-	}
+	@Value("${cts.detection.temperature}")
+	private String detectionTemperature;
 	
-	public List<SystemVariableEntity> getSystemVariables(String variableGroup) {
-		return systemVariableRepository.findAllByVariableGroupAndEnabled(variableGroup, true);
-	}
+	@Value("${cts.clinic.number}")
+	private String clinicContactNumber;
 	
-	public Map<String, String> getSystemVariablesKeyValue(String variableGroup) {
-		return systemVariableRepository.findAllByVariableGroupAndEnabled(variableGroup, true)
+	@Value("${cts.clinic.email}")
+	private String clinicEmail;
+	
+	@Value("${cts.admin.number}")
+	private String adminContactNumber;
+	
+	@Value("${cts.admin.email}")
+	private String adminEmail;
+	
+	public List<ApplicationVariable> getApplicationVariables(String variableGroup) {
+		return applicationVariableRepository.findAllByVariableGroupAndEnabled(variableGroup, true)
 									   .stream()
-									   .collect(Collectors.toMap(SystemVariableEntity::getVariableKey, SystemVariableEntity::getVariableValue));
+									   .map(ApplicationVariable::new)
+									   .collect(Collectors.toList());
 	}
 	
-	public List<SystemVariableEntity> initializeSystemVariables() {
+	public Map<String, String> getApplicationVariablesKeyValue(String variableGroup) {
+		return applicationVariableRepository.findAllByVariableGroupAndEnabled(variableGroup, true)
+									   .stream()
+									   .collect(Collectors.toMap(ApplicationVariableEntity::getCode, ApplicationVariableEntity::getDescription));
+	}
+	
+	public ApplicationVariable addApplicationVariable(ApplicationVariable applicationVariable) {
+		return Optional.ofNullable(applicationVariable)
+					   .map(ApplicationVariableEntity::new)
+					   .map(entity -> {entity.setVariableId(null); return entity;})
+					   .map(applicationVariableRepository::saveAndFlush)
+					   .map(ApplicationVariable::new)
+					   .orElseThrow(BadRequestException::new);
+	}
+	
+	public void deleteApplicationVariable(ApplicationVariable applicationVariable) {
+		Optional.ofNullable(applicationVariable)
+					   .map(ApplicationVariable::getVariableId)
+					   .ifPresent(applicationVariableRepository::deleteById);
+	}
+	
+	@Transactional
+	public DetectionVariable updateDetectionVariables(DetectionVariable detectionVariable) {
+		
+		List<ApplicationVariableEntity> entityList = new ArrayList<>();
+		ApplicationVariableEntity entity = new ApplicationVariableEntity();
+		entity.setCode("clinicEmail");
+		entity.setDescription(detectionVariable.getClinicEmail());
+		entity.setEnabled(true);
+		entity.setVariableGroup("DETECTION VARIABLE");
+		entityList.add(entity);
+		
+		entity = new ApplicationVariableEntity();
+		entity.setCode("clinicContactNumber");
+		entity.setDescription(detectionVariable.getClinicContactNumber());
+		entity.setEnabled(true);
+		entity.setVariableGroup("DETECTION VARIABLE");
+		entityList.add(entity);
+		
+		entity = new ApplicationVariableEntity();
+		entity.setCode("adminEmail");
+		entity.setDescription(detectionVariable.getAdminEmail());
+		entity.setEnabled(true);
+		entity.setVariableGroup("DETECTION VARIABLE");
+		entityList.add(entity);
+		
+		entity = new ApplicationVariableEntity();
+		entity.setCode("adminContactNumber");
+		entity.setDescription(detectionVariable.getAdminContactNumber());
+		entity.setEnabled(true);
+		entity.setVariableGroup("DETECTION VARIABLE");
+		entityList.add(entity);
+		
+		entity = new ApplicationVariableEntity();
+		entity.setCode("detectionTemperature");
+		entity.setDescription(String.valueOf(detectionVariable.getDetectionTemperature()));
+		entity.setEnabled(true);
+		entity.setVariableGroup("DETECTION VARIABLE");
+		entityList.add(entity);
+		
+		applicationVariableRepository.deleteAllByVariableGroup("DETECTION VARIABLE");
+		applicationVariableRepository.saveAll(entityList);
+		return detectionVariable;
+	}
+	
+	public List<ApplicationVariable> initializeApplication() {
 		Map<String, String> validPositionMap = new HashMap<>();
 		validPositionMap.put("INSP", "Inspector");
 		validPositionMap.put("MNTN", "Maintenance");
@@ -60,32 +141,53 @@ public class ApplicationService {
 		validAreaCodeMap.put("0003", "Area 0003");
 		validAreaCodeMap.put("0004", "Area 0004");
 		
-		systemVariableRepository.deleteAll();
+		Map<String, String> detectionVariablesMap = new HashMap<>();
+		detectionVariablesMap.put("detectionTemperature", this.detectionTemperature);
+		detectionVariablesMap.put("clinicContactNumber", this.clinicContactNumber);
+		detectionVariablesMap.put("clinicEmail", this.clinicEmail);
+		detectionVariablesMap.put("adminContactNumber", this.adminContactNumber);
+		detectionVariablesMap.put("adminEmail", this.adminEmail);
+		
+		applicationVariableRepository.deleteAll();
 		validPositionMap.forEach((key, value) -> {
-			SystemVariableEntity sv = new SystemVariableEntity();
-			sv.setEnabled(true);
-			sv.setVariableGroup("POSITION");
-			sv.setVariableKey(key);
-			sv.setVariableValue(value);
-			systemVariableRepository.save(sv);
+			ApplicationVariableEntity var = new ApplicationVariableEntity();
+			var.setEnabled(true);
+			var.setVariableGroup("POSITION");
+			var.setCode(key);
+			var.setDescription(value);
+			applicationVariableRepository.save(var);
 		});
 		validDepartmentMap.forEach((key, value) -> {
-			SystemVariableEntity sv = new SystemVariableEntity();
-			sv.setEnabled(true);
-			sv.setVariableGroup("DEPARTMENT");
-			sv.setVariableKey(key);
-			sv.setVariableValue(value);
-			systemVariableRepository.save(sv);
+			ApplicationVariableEntity var = new ApplicationVariableEntity();
+			var.setEnabled(true);
+			var.setVariableGroup("DEPARTMENT");
+			var.setCode(key);
+			var.setDescription(value);
+			applicationVariableRepository.save(var);
+		});
+		detectionVariablesMap.forEach((key, value) -> {
+			ApplicationVariableEntity var = new ApplicationVariableEntity();
+			var.setEnabled(true);
+			var.setVariableGroup("DETECTION VARIABLE");
+			var.setCode(key);
+			var.setDescription(value);
+			applicationVariableRepository.save(var);
 		});
 		validAreaCodeMap.forEach((key, value) -> {
-			SystemVariableEntity sv = new SystemVariableEntity();
-			sv.setEnabled(true);
-			sv.setVariableGroup("AREA CODE");
-			sv.setVariableKey(key);
-			sv.setVariableValue(value);
-			systemVariableRepository.save(sv);
+			ApplicationVariableEntity var = new ApplicationVariableEntity();
+			var.setEnabled(true);
+			var.setVariableGroup("AREA CODE");
+			var.setCode(key);
+			var.setDescription(value);
+			applicationVariableRepository.save(var);
 		});
 		
-		return systemVariableRepository.findAll();
+		return applicationVariableRepository.findAll()
+									   .stream()
+									   .map(ApplicationVariable::new)
+									   .collect(Collectors.toList());
+	}
+	
+	public void resetApplication() {
 	}
 }

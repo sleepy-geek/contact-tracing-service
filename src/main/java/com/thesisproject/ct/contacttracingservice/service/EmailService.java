@@ -122,6 +122,10 @@ public class EmailService {
 			}
 		}
 	}
+	
+	public void sendDetectionEmail() {
+		
+	}
 
 	public void sendUserProfilesReport() {
 		MimeMessage message = emailSender.createMimeMessage();

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.thesisproject.ct.contacttracingservice.model.Admin;
+import com.thesisproject.ct.contacttracingservice.model.ApplicationVariable;
+import com.thesisproject.ct.contacttracingservice.model.DetectionVariable;
 import com.thesisproject.ct.contacttracingservice.model.SearchObject;
 import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.service.ApplicationService;
@@ -53,8 +55,8 @@ public class AdminViewController {
 									UserProfile userProfile,
 									ModelMap model) {
 		
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("updateDisabled", true);
 		return "user-management";
 	}
@@ -62,8 +64,8 @@ public class AdminViewController {
 	@PostMapping(path = "/usermanagement/search")
 	public String postUserManagementSearch(SearchObject searchObject,
 			                               UserProfile userProfile,
-			                               ModelMap model,
-			                               BindingResult result) {
+			                               BindingResult result,
+			                               ModelMap model) {
 		List<UserProfile> userProfileList = new ArrayList<>();
 		
 		Optional.ofNullable(searchObject.getFilter())
@@ -72,8 +74,8 @@ public class AdminViewController {
 				.ifPresent(userProfileList::addAll);
 		
 		
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);
 		model.addAttribute("userProfile", userProfile);
 		model.addAttribute("updateDisabled", true);
@@ -84,8 +86,8 @@ public class AdminViewController {
 	@PostMapping(path = "/usermanagement/edit")
 	public String postUserManagementEdit(SearchObject searchObject,
 			                         	   UserProfile userProfile,
-			                         	   ModelMap model,
-			                         	   BindingResult result) {
+			                         	   BindingResult result,
+			                         	   ModelMap model) {
 		List<UserProfile> userProfileList = new ArrayList<>();
 		
 		Optional.ofNullable(searchObject.getFilter())
@@ -95,8 +97,8 @@ public class AdminViewController {
 		
 		userProfile = userService.getUserProfile(userProfile.getUserProfileId());
 		
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);
 		model.addAttribute("userProfile", userProfile);
 		model.addAttribute("updateDisabled", false);
@@ -116,8 +118,8 @@ public class AdminViewController {
 				.map(userService::getUserProfiles)
 				.ifPresent(userProfileList::addAll);
 		
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);
 		model.addAttribute("userProfile", userProfile);
 		model.addAttribute("updateDisabled", false);
@@ -145,8 +147,8 @@ public class AdminViewController {
 				.map(userService::getUserProfiles)
 				.ifPresent(userProfileList::addAll);
 		
-		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfiles", userProfileList);
 		model.addAttribute("userProfile", userProfile);
 		model.addAttribute("updateDisabled", false);
@@ -159,6 +161,82 @@ public class AdminViewController {
 		return "user-management";
 	}
 	
+	@GetMapping(path = "/applicationsettings")
+	public String getApplicationSettings(SearchObject searchObject,
+										 ApplicationVariable applicationVariable,
+										 DetectionVariable detectionVariable,
+										 BindingResult result,
+										 ModelMap model) {
+		
+		model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+		model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+		return "application-settings";
+	}
+	
+	@PostMapping(path = "/applicationsettings/add")
+	public String postApplicationSettingsAdd(SearchObject searchObject,
+											 @Valid ApplicationVariable applicationVariable,
+											 DetectionVariable detectionVariable,
+											 BindingResult result,
+											 ModelMap model) {
+		if(result.hasErrors()) {
+			model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+			model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+			model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+			return "application-settings";
+		}
+		
+		applicationService.addApplicationVariable(applicationVariable);
+		
+		model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+		model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+		return "application-settings";
+	}
+	
+	@PostMapping(path = "/applicationsettings/save")
+	public String postApplicationSettingsSave(SearchObject searchObject,
+												ApplicationVariable applicationVariable,
+												@Valid DetectionVariable detectionVariable,
+												BindingResult result,
+												ModelMap model) {
+		if(result.hasErrors()) {
+			model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+			model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+			model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+			return "application-settings";
+		}
+		
+		applicationService.updateDetectionVariables(detectionVariable);
+		
+		model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+		model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+		return "application-settings";
+	}
+	
+	@PostMapping(path = "/applicationsettings/remove")
+	public String postApplicationSettingsRemove(SearchObject searchObject,
+												@Valid ApplicationVariable applicationVariable,
+												DetectionVariable detectionVariable,
+												BindingResult result,
+												ModelMap model) {
+		if(result.hasErrors()) {
+			model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+			model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+			model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+			return "application-settings";
+		}
+		
+		applicationService.deleteApplicationVariable(applicationVariable);
+		
+		model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+		model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+		return "application-settings";
+	}
+	
 	@GetMapping(path = "/login")
 	public ModelAndView getLogin(ModelMap model) {
 		return new ModelAndView("login", "admin", new Admin());
@@ -168,50 +246,4 @@ public class AdminViewController {
 	public ModelAndView logout(ModelMap model) {
 		return new ModelAndView("login", "admin", new Admin());
 	}
-	
-//	@GetMapping(path = "/update-subject-details")
-//	public ModelAndView getSubjectEditorView(ModelMap model) {
-//		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-//		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
-//		return new ModelAndView("subjectEditorFormView", "subject", new UserProfile());
-//	}
-//	
-//	@PostMapping(path = "/update-subject-details/search")
-//	public ModelAndView getSubjectEditorSearchView(@RequestParam(name = "subjectId") String subjectId,
-//			 									   ModelMap model) {
-//		UserProfile userProfile = new UserProfile();
-//		try {
-//			userProfile = userService.getSubject(UUID.fromString(subjectId));
-//		} catch(Exception e) {
-//			
-//		}
-//		
-//		
-//		
-//		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-//		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
-//		return new ModelAndView("subjectEditorFormView", "subject", userProfile);
-//	}
-//	
-//	@PostMapping(path = "/update-subject-details/save")
-//	public String getSubjectEditorSaveView(@Valid @ModelAttribute(name = "subject") UserProfile userProfile,
-//			 							BindingResult result,
-//			 							ModelMap model) {
-//		if(result.hasErrors() ) {
-//			model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-//			model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
-//			return "subjectEditorFormView";
-//		}
-//		
-//		userProfile = userService.putSubject(userProfile.getSubjectId(), userProfile);
-//		
-//		model.addAttribute("validPositions", applicationService.getSystemVariablesKeyValue("POSITION"));
-//		model.addAttribute("validDepartments", applicationService.getSystemVariablesKeyValue("DEPARTMENT"));
-//		return "subjectEditorFormView";
-//	}
-//	
-//	@GetMapping(path = "/update-system-details")
-//	public String getSystemEditorView(ModelMap model) {
-//		return "adminFormView";
-//	}
 }

@@ -9,17 +9,21 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.entity.TemperatureRecordEntity;
+import com.thesisproject.ct.contacttracingservice.entity.UserImageEntity;
 import com.thesisproject.ct.contacttracingservice.entity.UserProfileEntity;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
+import com.thesisproject.ct.contacttracingservice.model.UserImage;
 import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.model.UserRegistration;
 import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 import com.thesisproject.ct.contacttracingservice.repository.TemperatureRecordRepository;
+import com.thesisproject.ct.contacttracingservice.repository.UserImageRepository;
 import com.thesisproject.ct.contacttracingservice.repository.UserProfileRepository;
 
 @Service
@@ -30,6 +34,9 @@ public class UserService {
 	
 	@Autowired
 	private TemperatureRecordRepository temperatureRecordRepository;
+	
+	@Autowired
+	private UserImageRepository userImageRepository;
 	
 	@Autowired
 	private ApplicationService applicationService;
@@ -68,11 +75,11 @@ public class UserService {
 	
 	private UserProfile populateDepartmentAndPosition(UserProfile userProfile) {
 		Optional.ofNullable(userProfile.getDepartment())
-				.map(applicationService.getSystemVariablesKeyValue("DEPARTMENT")::get)
+				.map(applicationService.getApplicationVariablesKeyValue("DEPARTMENT")::get)
 				.ifPresent(userProfile::setDepartment);
 		
 		Optional.ofNullable(userProfile.getPosition())
-				.map(applicationService.getSystemVariablesKeyValue("POSITION")::get)
+				.map(applicationService.getApplicationVariablesKeyValue("POSITION")::get)
 				.ifPresent(userProfile::setPosition);
 		
 		return userProfile;
@@ -117,7 +124,7 @@ public class UserService {
 					   		 .orElse(new UserProfile());
 	}
 	
-	public TemperatureRecord postTemperatureRecord(UUID userProfileId, TemperatureRecord temperatureRecord) {
+	public TemperatureRecord postTemperatureRecord(UUID userProfileId, TemperatureRecord temperatureRecord, MultipartFile imageFile) {
 		return Optional.ofNullable(temperatureRecord)
 					   .map(temp -> {
 						   temp.setUserProfileId(userProfileId);
@@ -126,6 +133,7 @@ public class UserService {
 					   .map(TemperatureRecordEntity::new)
 					   .map(temperatureRecordRepository::saveAndFlush)
 					   .map(TemperatureRecord::new)
+					   .map(tempRec -> this.verifyDetection(tempRec, imageFile))
 					   .orElse(new TemperatureRecord());
 	}
 	
@@ -134,6 +142,24 @@ public class UserService {
 					   .map(UserProfileEntity::new)
 					   .map(userProfileRepository::saveAndFlush)
 					   .map(UserRegistration::new)
+					   .orElseThrow(BadRequestException::new);
+	}
+	
+	public TemperatureRecord verifyDetection(TemperatureRecord temperatureRecord, MultipartFile imageFile) {
+		
+		return temperatureRecord;
+	}
+	
+	public UserImage postUserImage(UUID userProfileId, MultipartFile imageFile) {
+		return Optional.of(imageFile)
+					   .map(UserImage::new)
+					   .map(UserImageEntity::new)
+					   .map(entity -> {
+						   entity.setUserProfileId(userProfileId);
+						   return entity;
+					   })
+					   .map(userImageRepository::saveAndFlush)
+					   .map(UserImage::new)
 					   .orElseThrow(BadRequestException::new);
 	}
 }

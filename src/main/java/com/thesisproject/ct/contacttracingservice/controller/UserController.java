@@ -14,16 +14,19 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
-import com.thesisproject.ct.contacttracingservice.model.UserImage;
 import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.service.EmailService;
 import com.thesisproject.ct.contacttracingservice.service.UserService;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/api/userprofiles")
@@ -67,14 +70,10 @@ public class UserController {
 		userService.deleteUserProfile(userProfileId);
 	}
 	
-	@PostMapping(path = "/{userProfileId}/temperaturerecords", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/{userProfileId}/temperaturerecords", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<TemperatureRecord> postTemperatureRecord(@PathVariable UUID userProfileId,
-																	 @RequestBody TemperatureRecord temperatureRecord) throws BadRequestException {
-		return ResponseEntity.ok().body(userService.postTemperatureRecord(userProfileId, temperatureRecord));
-	}
-	
-	@PostMapping(path ="/{userProfileId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<UserImage> postUserImage(MultipartFile imageFile) {
-		return ResponseEntity.ok(null);
+																   @RequestPart(name = "temperatureRecord", required = true) @Parameter(schema = @Schema(type = "string", format = "binary")) TemperatureRecord temperatureRecord,
+																   @RequestPart(name = "imageFile", required = false) MultipartFile imageFile) throws BadRequestException {
+		return ResponseEntity.ok().body(userService.postTemperatureRecord(userProfileId, temperatureRecord, imageFile));
 	}
 }

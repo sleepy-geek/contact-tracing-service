@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thesisproject.ct.contacttracingservice.entity.SystemVariableEntity;
+import com.thesisproject.ct.contacttracingservice.entity.ApplicationVariableEntity;
+import com.thesisproject.ct.contacttracingservice.model.ApplicationVariable;
 import com.thesisproject.ct.contacttracingservice.service.ApplicationService;
 
 @RestController
@@ -20,18 +21,13 @@ public class ApplicationController {
 	@Autowired
 	private ApplicationService applicationService;
 	
-	@GetMapping
-	public ResponseEntity<List<SystemVariableEntity>> getSystemVariables() {
-		return ResponseEntity.ok(applicationService.getSystemVariables());
-	}
-	
 	@GetMapping(path = "/variables")
-	public ResponseEntity<List<SystemVariableEntity>> getSystemVariablesByGroup(@RequestParam(name = "variablegroup") String variableGroup) {
-		return ResponseEntity.ok(applicationService.getSystemVariables(variableGroup));
+	public ResponseEntity<List<ApplicationVariable>> getApplicationVariables(@RequestParam(name = "group") String variableGroup) {
+		return ResponseEntity.ok(applicationService.getApplicationVariables(variableGroup));
 	}
 	
-	@PostMapping(path = "/init")
-	public ResponseEntity<List<SystemVariableEntity>> initializeSystemVariables() {
-		return ResponseEntity.ok(applicationService.initializeSystemVariables());
+	@PostMapping(path = "/initialize")
+	public ResponseEntity<List<ApplicationVariable>> initializeApplication() {
+		return ResponseEntity.ok(applicationService.initializeApplication());
 	}
 }
