@@ -129,7 +129,7 @@
 					<form class="row row-cols-1 needs-validation border mb-3 mt-3" action="#" th:action="@{/applicationsettings/save}" th:object="${detectionVariable}" method="post" novalidate>
 						<div class="col mb-3 mt-3">
 							<label class="form-label" for="rngDetectionTemperature">Detection Temperature</label>
-							<span th:text="*{detectionTemperature}" id="rangeValue"></span>
+							<input type="text" th:field="*{detectionTemperature}" id="rangeValue" disabled></span>
 							<div class="range">
 								<input id="rngDetectionTemperature" class="form-range" type="range" min="36" max="38" step="0.1" onchange="updateRangeValue(this.value);" th:field="*{detectionTemperature}" th:classappend="${not #lists.isEmpty(#fields.errors('detectionTemperature'))} ? is-invalid">
 								<div class="invalid-feedback">
@@ -187,7 +187,7 @@
 		crossorigin="anonymous"></script>
 	<script>
 		function updateRangeValue(value) {
-			document.getElementById('rangeValue').innerHTML=value;
+			document.getElementById('rangeValue').value=value;
 		}
 	</script>
 </body>

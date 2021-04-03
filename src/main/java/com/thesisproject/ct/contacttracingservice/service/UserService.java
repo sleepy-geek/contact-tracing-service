@@ -146,7 +146,6 @@ public class UserService {
 	}
 	
 	public TemperatureRecord verifyDetection(TemperatureRecord temperatureRecord, MultipartFile imageFile) {
-		
 		return temperatureRecord;
 	}
 	
