@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,14 +36,23 @@ public class UserService {
 	@Autowired
 	private TemperatureRecordRepository temperatureRecordRepository;
 	
+	@Autowired 
+	private FormRepository formRepository;
+	
 	@Autowired
 	private UserImageRepository userImageRepository;
 	
 	@Autowired
 	private ApplicationService applicationService;
 	
-	@Autowired 
-	private FormRepository formRepository;
+	@Autowired
+	private SmsService smsService;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Value("${cts.detection.temperature}")
+	private String detectionTemperature;
 	
 	public List<UserProfile> getUserProfiles(String filter) {
 		List<UserProfileEntity> entities = Optional.ofNullable(filter)
@@ -146,6 +156,12 @@ public class UserService {
 	}
 	
 	public TemperatureRecord verifyDetection(TemperatureRecord temperatureRecord, MultipartFile imageFile) {
+		Optional.ofNullable(temperatureRecord)
+				.filter(temp -> Double.parseDouble(this.detectionTemperature) <= temperatureRecord.getTemperature())
+				.ifPresent(temp -> {
+					smsService.sendDetectionSms();
+					emailService.sendDetectionEmail();
+				});
 		return temperatureRecord;
 	}
 	

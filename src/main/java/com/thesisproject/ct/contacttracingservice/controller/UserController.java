@@ -23,6 +23,7 @@ import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
 import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.service.EmailService;
+import com.thesisproject.ct.contacttracingservice.service.SmsService;
 import com.thesisproject.ct.contacttracingservice.service.UserService;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,6 +38,9 @@ public class UserController {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private SmsService smsService;
 	
 	@PostMapping(path = "/export")
 	public ResponseEntity<List<UserProfile>> exportUsers() {
@@ -75,5 +79,10 @@ public class UserController {
 																   @RequestPart(name = "temperatureRecord", required = true) @Parameter(schema = @Schema(type = "string", format = "binary")) TemperatureRecord temperatureRecord,
 																   @RequestPart(name = "imageFile", required = false) MultipartFile imageFile) throws BadRequestException {
 		return ResponseEntity.ok().body(userService.postTemperatureRecord(userProfileId, temperatureRecord, imageFile));
+	}
+	
+	@GetMapping(path = "test")
+	public void testSms() {
+		smsService.sendRegistrationCompletionSms(null);
 	}
 }

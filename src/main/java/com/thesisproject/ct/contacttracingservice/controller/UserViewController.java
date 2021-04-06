@@ -20,6 +20,7 @@ import com.thesisproject.ct.contacttracingservice.model.UserRegistration;
 import com.thesisproject.ct.contacttracingservice.service.ApplicationService;
 import com.thesisproject.ct.contacttracingservice.service.EmailService;
 import com.thesisproject.ct.contacttracingservice.service.FormService;
+import com.thesisproject.ct.contacttracingservice.service.SmsService;
 import com.thesisproject.ct.contacttracingservice.service.UserService;
 
 import springfox.documentation.annotations.ApiIgnore;
@@ -40,6 +41,9 @@ public class UserViewController {
 	
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private SmsService smsService;
 	
 	@GetMapping()
 	public String getUserRegistration(UserRegistration userRegistration) {
@@ -97,6 +101,8 @@ public class UserViewController {
 		userService.postUserProfile(userProfile);
 		formService.submitForm(form);
 		emailService.sendPersonalQRCodeEmail(userProfile);
+		smsService.sendRegistrationCompletionSms(userProfile);
+		
 		return "user-profile-success";
 	}
 }
