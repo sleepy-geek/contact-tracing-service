@@ -28,6 +28,9 @@ public class UserProfile extends UserRegistration{
 	@Size(min = 10, max = 10, message = "Please enter a valid contact number.")
 	private String contactNumber;
 	
+	@Size(min = 6, max = 6, message = "Invalid OTP")
+	private String otp;
+	
 	@Size(min = 2, max = 50, message = "Please enter a valid position.")
 	private String position;
 	
@@ -48,6 +51,7 @@ public class UserProfile extends UserRegistration{
 		this.middleName = entity.getMiddleName();
 		this.idNumber = entity.getIdNumber();
 		this.contactNumber = entity.getContactNumber();
+		this.otp = entity.getOtp();
 		this.position = entity.getPosition();
 		this.department = entity.getDepartment();
 		this.userAgreementAccepted = entity.isUserAgreementAccepted();

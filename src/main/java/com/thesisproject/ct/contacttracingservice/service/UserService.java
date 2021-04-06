@@ -157,9 +157,10 @@ public class UserService {
 	
 	public TemperatureRecord verifyDetection(TemperatureRecord temperatureRecord, MultipartFile imageFile) {
 		Optional.ofNullable(temperatureRecord)
-				.filter(temp -> Double.parseDouble(this.detectionTemperature) <= temperatureRecord.getTemperature())
+				.filter(temp -> Double.parseDouble(this.detectionTemperature) <= temp.getTemperature())
 				.ifPresent(temp -> {
-					smsService.sendDetectionSms();
+					UserProfile userProfile = this.getUserProfile(temp.getUserProfileId());
+					smsService.sendDetectionSms(userProfile);
 					emailService.sendDetectionEmail();
 				});
 		return temperatureRecord;

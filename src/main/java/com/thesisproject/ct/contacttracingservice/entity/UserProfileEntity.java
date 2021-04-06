@@ -51,6 +51,9 @@ public class UserProfileEntity {
 	@Column(name = "contact_number", nullable = true)
 	private String contactNumber;
 	
+	@Column(name = "otp", nullable = true)
+	private String otp;
+	
 	@Column(name = "email", nullable = false)
 	private String email;
 	
@@ -84,6 +87,7 @@ public class UserProfileEntity {
 		this.lastName = StringUtils.capitalize(userProfile.getLastName());
 		this.idNumber = userProfile.getIdNumber();
 		this.contactNumber = userProfile.getContactNumber();
+		this.otp = userProfile.getOtp();
 		this.email = userProfile.getEmail().toLowerCase();
 		this.position = userProfile.getPosition();
 		this.department = userProfile.getDepartment();

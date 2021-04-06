@@ -23,7 +23,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -105,8 +104,6 @@ public class EmailService {
 			helper.addAttachment("attachment.pdf", file);
 			emailSender.send(message);
 
-			FileUtils.forceDelete(attachmentImage);
-			FileUtils.forceDelete(attachmentFile);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

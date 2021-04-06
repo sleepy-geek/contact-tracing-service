@@ -54,9 +54,15 @@
 				<div class="input-group">
 					<span class="input-group-text">+63</span>
 					<input id="txtContactNumber" type="text" class="form-control" placeholder="9101234567" th:field="*{contactNumber}" th:value="${userProfile.contactNumber}" th:classappend="${not #lists.isEmpty(#fields.errors('contactNumber'))} ? is-invalid">
+					<input id="txtOTP" type="text" class="form-control" placeholder="otp" th:field="*{otp}" th:value="${userProfile.otp}" th:classappend="${not #lists.isEmpty(#fields.errors('otp'))} ? is-invalid">
+					<button type="submit" class="btn btn-outline-secondary" th:formaction="@{/cts/forms/{formId}/otp (formId=${formId})}">Send OTP</button>
 					<div class="invalid-feedback">
 						<p th:each="error: ${#fields.errors('contactNumber')}" th:text="${error}">Invalid value</p>
 					</div>
+					<div class="invalid-feedback">
+						<p th:each="error: ${#fields.errors('otp')}" th:text="${error}">Invalid value</p>
+					</div>
+					
 				</div>
 			</div>
 			<div class="col-md-8 mb-3">

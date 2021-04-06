@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -85,6 +86,22 @@ public class UserViewController {
 		return "user-profile";
 	}
 	
+	@PostMapping("/forms/{formId}/otp")
+	public String sendOTP(@PathVariable("formId") UUID formId,
+			                      Form form,
+			                      UserProfile userProfile,
+			                      BindingResult result,
+			                      ModelMap model) {
+		userProfile.setOtp(smsService.sendOTP(userProfile).getCode());
+		userService.postUserProfile(userProfile);
+		
+		userProfile.setOtp(null);
+		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
+		model.addAttribute("userProfile", userProfile);
+		return "user-profile";
+	}
+	
 	@PostMapping("/forms/{formId}/submit")
 	public String submitUserProfileForm(@PathVariable("formId") UUID formId,
 			                      Form form,
@@ -94,6 +111,10 @@ public class UserViewController {
 		model.addAttribute("validPositions", applicationService.getApplicationVariablesKeyValue("POSITION"));
 		model.addAttribute("validDepartments", applicationService.getApplicationVariablesKeyValue("DEPARTMENT"));
 		model.addAttribute("userProfile", userProfile);
+		if(!userService.getUserProfile(userProfile.getUserProfileId()).getOtp().equals(userProfile.getOtp()) && !result.hasFieldErrors("otp")) {
+			result.addError(new FieldError("userProfile", "otp", "Invalid OTP"));
+		}
+		
 		if(result.hasErrors()) {
 			return "user-profile";
 		}
