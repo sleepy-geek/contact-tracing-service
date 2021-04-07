@@ -60,14 +60,14 @@ public class SmsService {
 	}
 	
 	public void sendDetectionSms(UserProfile userProfile) {
-		SmsObject sms = new SmsObject();
-		sms.setApikey(this.semaphoreApiKey);
-		//sms.setSendername(this.senderName);
-		sms.setNumber("09208252263,09208252263,09208252263");
-		sms.setMessage("Fever detected, please coordinate with the clinic for further instructions.");
-		RestTemplate template = new RestTemplate();
-		HttpEntity<SmsObject> httpEntity = new HttpEntity<>(sms);
-		String response = template.postForObject(semaphoreMessagesUrl, httpEntity, String.class);
-		System.out.println(response);
+//		SmsObject sms = new SmsObject();
+//		sms.setApikey(this.semaphoreApiKey);
+//		//sms.setSendername(this.senderName);
+//		sms.setNumber("09208252263,09208252263,09208252263");
+//		sms.setMessage("Fever detected, please coordinate with the clinic for further instructions.");
+//		RestTemplate template = new RestTemplate();
+//		HttpEntity<SmsObject> httpEntity = new HttpEntity<>(sms);
+//		String response = template.postForObject(semaphoreMessagesUrl, httpEntity, String.class);
+//		System.out.println(response);
 	}
 }
