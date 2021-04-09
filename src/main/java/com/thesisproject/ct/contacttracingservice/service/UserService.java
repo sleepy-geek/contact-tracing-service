@@ -1,5 +1,6 @@
 package com.thesisproject.ct.contacttracingservice.service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -161,7 +162,11 @@ public class UserService {
 				.ifPresent(temp -> {
 					UserProfile userProfile = this.getUserProfile(temp.getUserProfileId());
 					smsService.sendDetectionSms(userProfile);
-					emailService.sendDetectionEmail();
+					
+					List<TemperatureRecord> temperatureRecords = Arrays.asList(temperatureRecord);
+					userProfile.setTemperatureRecords(temperatureRecords);
+					userProfile.setImageFile(imageFile);
+					emailService.sendDetectionEmail(userProfile);
 				});
 		return temperatureRecord;
 	}

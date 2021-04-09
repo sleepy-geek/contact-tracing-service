@@ -6,13 +6,14 @@ import java.util.List;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Size;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.thesisproject.ct.contacttracingservice.entity.UserProfileEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -44,7 +45,7 @@ public class UserProfile extends UserRegistration{
 	private String lastTemperatureRecord;
 	
 	private List<TemperatureRecord> temperatureRecords;
-	private UserImage image;
+	private MultipartFile imageFile;
 	
 	public UserProfile(UserProfileEntity entity) {
 		super(entity);

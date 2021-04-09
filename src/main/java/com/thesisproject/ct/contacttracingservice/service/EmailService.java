@@ -23,6 +23,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -66,9 +67,6 @@ public class EmailService {
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
 		
 		emailSender.send(message);
 	}
@@ -120,8 +118,49 @@ public class EmailService {
 		}
 	}
 	
-	public void sendDetectionEmail() {
+	public void sendDetectionEmail(UserProfile userProfile) {
+		MimeMessage message = emailSender.createMimeMessage();
+		File attachmentFile = new File(userProfile.getUserProfileId() + "attachment.pdf");
 		
+		try(OutputStream outputStream = new FileOutputStream(attachmentFile)) {
+			FileSystemResource file = new FileSystemResource(attachmentFile);
+			MimeMessageHelper helper = new MimeMessageHelper(message, true);
+			helper.setFrom("no-reply-contact-tracing@gmail.com");
+			helper.setTo(userProfile.getEmail());
+			helper.setSubject("Fever Detection Notification");
+			
+			Context context = new Context();
+			context.setVariable("userProfile", userProfile);
+			context.setVariable("temperatureRecord", userProfile.getTemperatureRecords().get(0));
+			if(null != userProfile.getImageFile()) {
+				context.setVariable("imageUrl","data:image/png;base64," + Base64.getEncoder().encodeToString(userProfile.getImageFile().getBytes()));
+			}
+			helper.setText(templateEngine.process("detection-email", context),  true);
+			
+			ITextRenderer renderer = new ITextRenderer();
+			String html = templateEngine.process("detection-attachment", context);
+			//PDFEncryption encryption = new PDFEncryption(userProfile.getIdNumber().getBytes(), userProfile.getIdNumber().getBytes());
+			renderer.setDocumentFromString(html);
+			//renderer.setPDFEncryption(encryption);
+			renderer.layout();
+			renderer.createPDF(outputStream);
+
+			helper.addAttachment("attachment.pdf", file);
+			emailSender.send(message);
+
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				FileUtils.forceDelete(attachmentFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void sendUserProfilesReport() {
