@@ -133,7 +133,7 @@ public class EmailService {
 			context.setVariable("userProfile", userProfile);
 			context.setVariable("temperatureRecord", userProfile.getTemperatureRecords().get(0));
 			if(null != userProfile.getImageFile()) {
-				context.setVariable("imageUrl","data:image/png;base64," + Base64.getEncoder().encodeToString(userProfile.getImageFile().getBytes()));
+				context.setVariable("imageUrl","data:image/jpg;base64," + Base64.getEncoder().encodeToString(userProfile.getImageFile().getBytes()));
 			}
 			helper.setText(templateEngine.process("detection-email", context),  true);
 			
