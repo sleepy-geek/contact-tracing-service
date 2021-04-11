@@ -46,6 +46,9 @@ public class TemperatureRecordEntity {
 	@Column(name = "area_code", nullable = false)
 	private String areaCode;
 	
+	@Column(name = "detection", nullable = false)
+	private boolean detection;
+	
 	@CreatedDate
 	@CreationTimestamp
 	private LocalDateTime createdDate;
@@ -66,5 +69,6 @@ public class TemperatureRecordEntity {
 		this.temperature = temperatureRecord.getTemperature();
 		this.recordDate = temperatureRecord.getRecordDate();
 		this.areaCode = temperatureRecord.getAreaCode();
+		this.detection = temperatureRecord.isDetection();
 	}
 }

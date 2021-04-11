@@ -11,4 +11,5 @@ import com.thesisproject.ct.contacttracingservice.entity.TemperatureRecordEntity
 @Repository
 public interface TemperatureRecordRepository extends JpaRepository<TemperatureRecordEntity, UUID>{
 	public List<TemperatureRecordEntity> findAllByUserProfileId(UUID userProfileId);
+	public List<TemperatureRecordEntity> findAllByDetection(boolean detection);
 }

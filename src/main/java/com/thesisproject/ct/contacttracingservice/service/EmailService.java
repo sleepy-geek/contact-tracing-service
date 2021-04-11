@@ -23,7 +23,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -139,9 +138,7 @@ public class EmailService {
 			
 			ITextRenderer renderer = new ITextRenderer();
 			String html = templateEngine.process("detection-attachment", context);
-			//PDFEncryption encryption = new PDFEncryption(userProfile.getIdNumber().getBytes(), userProfile.getIdNumber().getBytes());
 			renderer.setDocumentFromString(html);
-			//renderer.setPDFEncryption(encryption);
 			renderer.layout();
 			renderer.createPDF(outputStream);
 

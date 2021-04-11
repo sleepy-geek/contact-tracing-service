@@ -237,6 +237,20 @@ public class AdminViewController {
 		return "application-settings";
 	}
 	
+	@GetMapping(path = "/detectionhistory")
+	public String getDetectionHistory(SearchObject searchObject,
+									  ApplicationVariable applicationVariable,
+									  DetectionVariable detectionVariable,
+									  BindingResult result,
+									  ModelMap model) {
+		
+		model.addAttribute("detections", userService.getDetections());
+		model.addAttribute("validPositions", applicationService.getApplicationVariables("POSITION"));
+		model.addAttribute("validDepartments", applicationService.getApplicationVariables("DEPARTMENT"));
+		model.addAttribute("detectionVariable", new DetectionVariable(applicationService.getApplicationVariables("DETECTION VARIABLE")));
+		return "detection-history";
+	}
+	
 	@GetMapping(path = "/login")
 	public ModelAndView getLogin(ModelMap model) {
 		return new ModelAndView("login", "admin", new Admin());

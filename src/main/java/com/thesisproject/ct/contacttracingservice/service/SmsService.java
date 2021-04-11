@@ -1,6 +1,5 @@
 package com.thesisproject.ct.contacttracingservice.service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

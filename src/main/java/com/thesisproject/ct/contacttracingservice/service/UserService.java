@@ -1,5 +1,6 @@
 package com.thesisproject.ct.contacttracingservice.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -15,17 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisproject.ct.contacttracingservice.entity.FormEntity;
 import com.thesisproject.ct.contacttracingservice.entity.TemperatureRecordEntity;
-import com.thesisproject.ct.contacttracingservice.entity.UserImageEntity;
 import com.thesisproject.ct.contacttracingservice.entity.UserProfileEntity;
 import com.thesisproject.ct.contacttracingservice.error.BadRequestException;
 import com.thesisproject.ct.contacttracingservice.error.NotFoundException;
+import com.thesisproject.ct.contacttracingservice.model.Detection;
 import com.thesisproject.ct.contacttracingservice.model.TemperatureRecord;
-import com.thesisproject.ct.contacttracingservice.model.UserImage;
 import com.thesisproject.ct.contacttracingservice.model.UserProfile;
 import com.thesisproject.ct.contacttracingservice.model.UserRegistration;
 import com.thesisproject.ct.contacttracingservice.repository.FormRepository;
 import com.thesisproject.ct.contacttracingservice.repository.TemperatureRecordRepository;
-import com.thesisproject.ct.contacttracingservice.repository.UserImageRepository;
 import com.thesisproject.ct.contacttracingservice.repository.UserProfileRepository;
 
 @Service
@@ -39,9 +38,6 @@ public class UserService {
 	
 	@Autowired 
 	private FormRepository formRepository;
-	
-	@Autowired
-	private UserImageRepository userImageRepository;
 	
 	@Autowired
 	private ApplicationService applicationService;
@@ -141,10 +137,10 @@ public class UserService {
 						   temp.setUserProfileId(userProfileId);
 						   return temp;
 					   })
+					   .map(tempRec -> this.verifyDetection(tempRec, imageFile))
 					   .map(TemperatureRecordEntity::new)
 					   .map(temperatureRecordRepository::saveAndFlush)
 					   .map(TemperatureRecord::new)
-					   .map(tempRec -> this.verifyDetection(tempRec, imageFile))
 					   .orElse(new TemperatureRecord());
 	}
 	
@@ -162,7 +158,7 @@ public class UserService {
 				.ifPresent(temp -> {
 					UserProfile userProfile = this.getUserProfile(temp.getUserProfileId());
 					smsService.sendDetectionSms(userProfile);
-					
+					temperatureRecord.setDetection(true);
 					List<TemperatureRecord> temperatureRecords = Arrays.asList(temperatureRecord);
 					userProfile.setTemperatureRecords(temperatureRecords);
 					userProfile.setImageFile(imageFile);
@@ -171,16 +167,18 @@ public class UserService {
 		return temperatureRecord;
 	}
 	
-	public UserImage postUserImage(UUID userProfileId, MultipartFile imageFile) {
-		return Optional.of(imageFile)
-					   .map(UserImage::new)
-					   .map(UserImageEntity::new)
-					   .map(entity -> {
-						   entity.setUserProfileId(userProfileId);
-						   return entity;
-					   })
-					   .map(userImageRepository::saveAndFlush)
-					   .map(UserImage::new)
-					   .orElseThrow(BadRequestException::new);
+	public List<Detection> getDetections() {
+		List<Detection> detections = new ArrayList<>();
+		temperatureRecordRepository.findAllByDetection(true)
+								   .stream()
+								   .map(TemperatureRecord::new)
+								   .map(temp -> {
+									   Detection detection = new Detection();
+									   detection.setTemperatureRecord(temp);
+									   detection.setUserProfile(this.getUserProfile(temp.getUserProfileId()));
+									   return detection;
+								   })
+								   .forEach(detections::add);
+		return detections;
 	}
 }

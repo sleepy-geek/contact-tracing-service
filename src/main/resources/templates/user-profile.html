@@ -14,7 +14,7 @@
 	<div class="container">
 		<div class="col mb-3">
 		</div>
-		<form action="#" class="row row-cols-1 needs-validation border" th:action="@{/cts/forms/{formId}/submit (formId=${formId})}" th:object="${userProfile}" method="post" novalidate>
+		<form action="#" class="row row-cols-1 needs-validation border shadow" th:action="@{/cts/forms/{formId}/submit (formId=${formId})}" th:object="${userProfile}" method="post" novalidate>
 			<div class="col">
 				<legend>User Profile</legend>
 				<p>Form ID: <span class="fst-italic" th:text="${formId}"></span></p>
@@ -95,7 +95,7 @@
 			<div class="col mb-3">
 				<div class="form-check">
 					<input id="chkUserAgreement" type="checkbox" class="form-check-input" th:field="*{userAgreementAccepted}" th:value="${userProfile.userAgreementAccepted}" th:classappend="${not #lists.isEmpty(#fields.errors('userAgreementAccepted'))} ? is-invalid">
-					<label class="form-check-label" for="chkUserAgreement">I certify that I am 18 years old or older, all the above information is correct, and I agree to the <a href="#">User Agreement</a> and <a href="#">Privacy Policy</a>.</label>
+					<label class="form-check-label" for="chkUserAgreement">I certify that I am 18 years old or older, all the above information is correct, and I agree to the <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#tncModal">User Agreement and Privacy Policy</button>.</label>
 					<div class="invalid-feedback">
 						<p th:each="error: ${#fields.errors('userAgreementAccepted')}" th:text="${error}">Invalid value</p>
 					</div>
@@ -106,6 +106,19 @@
 				<button id="btnClear" type="reset" class="btn btn-secondary">Clear</button>
 			</div>
 		</form>
+	</div>
+	<div class="modal" tabindex="-1" id="tncModal">
+	  <div class="modal-dialog modal-dialog-scrollable">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title">Terms and Conditions</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body">
+	        <div th:replace="terms-and-conditions::tnc"></div>
+	      </div>
+	    </div>
+	  </div>
 	</div>
 	<footer th:replace="home::foot"></footer>
 	<script

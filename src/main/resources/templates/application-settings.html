@@ -14,7 +14,7 @@
 	<nav th:replace="home::navi"></nav>
 	<div class="row container-fluid justify-content-center">
 		<div class="col">
-			<div class="row border justify-content-around mb-3">
+			<div class="row border justify-content-around mb-3 shadow">
 				<h4 class="col-12 text-center display-4">Department</h4>
 				<div class="col-11 col-md-7 table-responsive border mb-3 mt-3">
 					<table class="table table-hover table-sm border mt-3">
@@ -69,7 +69,7 @@
 				</div>
 			</div>
 			
-			<div class="row border justify-content-around mb-3">
+			<div class="row border justify-content-around mb-3 shadow">
 				<h4 class="col-12 text-center display-4">Position</h4>
 				<div class="col-11 col-md-7 table-responsive border mb-3 mt-3">
 					<table class="table table-hover table-sm border mt-3">
@@ -123,7 +123,7 @@
 					</form>
 				</div>
 			</div>
-			<div class="border mb-3 justify-content-center row">
+			<div class="border mb-3 justify-content-center row shadow">
 				<h4 class="col-12 text-center display-4">Detection and Notification Settings</h4>
 				<div class="col-11">
 					<form class="row row-cols-1 needs-validation border mb-3 mt-3" action="#" th:action="@{/applicationsettings/save}" th:object="${detectionVariable}" method="post" novalidate>
